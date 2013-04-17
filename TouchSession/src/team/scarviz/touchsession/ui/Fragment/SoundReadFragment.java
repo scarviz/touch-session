@@ -1,19 +1,38 @@
 package team.scarviz.touchsession.ui.Fragment;
 
+
 import team.scarviz.touchsession.R;
+import team.scarviz.touchsession.Dto.SoundDto;
+import team.scarviz.touchsession.Utility.HttpUtility;
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.Toast;
 
 public class SoundReadFragment extends Fragment {
 
+	private boolean isActive = false;
+	ProgressDialogFragment mDialog;
+
+	private int mZandaka = -1;
+
+
+	public int getmZandaka() {
+		return mZandaka;
+	}
+
+	public void setmZandaka(int mZandaka) {
+		this.mZandaka = mZandaka;
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		// TODO ©“®¶¬‚³‚ê‚½ƒƒ\ƒbƒhEƒXƒ^ƒu
+		// TODO ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê‚½ï¿½ï¿½ï¿½\ï¿½bï¿½hï¿½Eï¿½Xï¿½^ï¿½u
 		super.onCreate(savedInstanceState);
 		 setRetainInstance(true);
 	}
@@ -21,8 +40,9 @@ public class SoundReadFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		// TODO ©“®¶¬‚³‚ê‚½ƒƒ\ƒbƒhEƒXƒ^ƒu
+		// TODO ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê‚½ï¿½ï¿½ï¿½\ï¿½bï¿½hï¿½Eï¿½Xï¿½^ï¿½u
 		View v = inflater.inflate(R.layout.sound_read_view, container,false);
+		initDataView(v);
 		return v;
 	}
 
@@ -44,15 +64,92 @@ public class SoundReadFragment extends Fragment {
 	 * @param v
 	 */
 	private void initDataView(View v){
+		if(mZandaka >= 0)
+			this.uploadSoundData(mZandaka);
 	}
-
-	public void setText(String s){
-		((TextView)getView().findViewById(R.id.SoundReadViewtxtMessage)).setText(s);
-	}
-
 	@Override
 	public void onResume() {
 	    super.onResume();
+	    if ( !isActive ) {
+	        final DialogFragment df = ( DialogFragment )
+	                getFragmentManager().findFragmentByTag( "progresss" );
+	        if ( df != null ) {
+	            df.dismiss();
+	        }
+	    }
 	}
+
+	/**
+	 * ã‚µã‚¦ãƒ³ãƒ‰ãƒ‡ãƒ¼ã‚¿ã®ã‚¢ãƒƒãƒ—ãƒ­ãƒ¼ãƒ‰
+	 * @param zandaka
+	 */
+	public void uploadSoundData(int zandaka){
+  		new OnSave(getActivity(),zandaka).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+	}
+
+
+
+
+	/**
+	 * ï¿½fï¿½[ï¿½^ï¿½Xï¿½Vï¿½ï¿½ï¿½ï¿½
+	 */
+	private class OnSave extends AsyncTask<Void,Void,SoundDto>{
+		Context mContext;
+		int mZandaka;
+
+		public OnSave(Context con,int zandaka) {
+			mContext = con;
+			mZandaka = zandaka;
+		}
+
+		@Override
+		protected SoundDto doInBackground(Void... params) {
+			return HttpUtility.uploadSoundData(mContext, mZandaka);
+		}
+
+		/**
+		 *
+		 */
+		@Override
+		protected void onPreExecute() {
+			mDialog = ProgressDialogFragment.newInstance("æ›²ãƒ‡ãƒ¼ã‚¿ã‚’ç”Ÿæˆã—ã¦ã„ã¾ã™");
+			mDialog.setCancelable(false);
+			mDialog.show(getFragmentManager(), "progress");
+			isActive = true;
+		}
+
+			/**
+		 * ï¿½Iï¿½ï¿½ï¿½ãˆï¿½ï¿½
+		 */
+		@Override
+		protected void onPostExecute(SoundDto ret)
+		{
+			if(mDialog != null){
+				try{
+					mDialog.dismiss();
+					}catch(Exception e){
+					}
+			}
+
+			if(isAdded()){
+				if(ret != null){
+					Toast.makeText(getActivity(), "æ›²ãƒ‡ãƒ¼ã‚¿ã‚’ç”Ÿæˆã—ã¾ã—ãŸ" ,Toast.LENGTH_SHORT).show();
+					ret.insert(getActivity());
+					getActivity().finish();
+				}
+				else{
+					Toast.makeText(getActivity(), "æ›²ãƒ‡ãƒ¼ã‚¿ã®ç”Ÿæˆã«å¤±æ•—ã—ã¾ã—ãŸ", Toast.LENGTH_SHORT).show();
+					getActivity().finish();
+				}
+			}
+			isActive = false;
+		}
+	}
+
+
+
+
+
+
 
 }

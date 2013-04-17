@@ -62,6 +62,14 @@ public class MainFragment extends Fragment {
 				((MainActivity)getActivity()).transitSoundEditFragment();
 			}
 		});
+
+		v.findViewById(R.id.MainViewbtnSession).setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View button) {
+				((MainActivity)getActivity()).transitSesssionEditFragment();
+			}
+		});
 	}
 
 	@Override

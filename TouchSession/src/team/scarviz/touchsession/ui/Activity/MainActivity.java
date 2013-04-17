@@ -26,6 +26,20 @@ public class MainActivity extends FragmentActivity {
 			ft.add(R.id.rootLayout, fragment);
 			ft.commit();
 		}
+
+/*		SoundDto s = new SoundDto();
+		s.insert(getApplicationContext());
+		new SoundDto();
+		s.insert(getApplicationContext());
+		new SoundDto();
+		s.insert(getApplicationContext());
+		new SoundDto();
+		s.insert(getApplicationContext());
+		new SoundDto();
+		s.insert(getApplicationContext());
+		new SoundDto();
+		s.insert(getApplicationContext());
+		*/
 	}
 
 	public void transitSoundReadFragment(){
@@ -36,6 +50,12 @@ public class MainActivity extends FragmentActivity {
 
 	public void transitSoundEditFragment(){
 		Intent in = new Intent(MainActivity.this,SoundEditActivity.class);
+		in.setAction(Intent.ACTION_VIEW);
+		startActivity(in);
+	}
+
+	public void transitSesssionEditFragment(){
+		Intent in = new Intent(MainActivity.this,SessionEditActivity.class);
 		in.setAction(Intent.ACTION_VIEW);
 		startActivity(in);
 	}

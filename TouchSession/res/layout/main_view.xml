@@ -2,24 +2,47 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal" >
+    android:orientation="vertical" >
 
-    <Button
+    <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    android:orientation="horizontal" >
+    <ImageButton
         android:id="@+id/MainViewbtnNFC"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
         android:text="音の読み取り" />
 
-    <Button
+    <TextView
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="Touch de Session" />
+    </LinearLayout>
+
+        <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    android:orientation="horizontal" >
+    <ImageButton
         android:id="@+id/MainViewbtnEdit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
         android:text="拍子編集" />
 
-    <Button
+    <ImageButton
         android:id="@+id/MainViewbtnSession"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
         android:text="セッション作成" />
+
+    </LinearLayout>
 
 </LinearLayout>

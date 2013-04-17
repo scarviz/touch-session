@@ -3,24 +3,22 @@ package team.scarviz.touchsession.Adapter;
 import java.util.List;
 
 import team.scarviz.touchsession.R;
-import team.scarviz.touchsession.Dto.SoundDto;
+import team.scarviz.touchsession.Data.SoundRythmData;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.TextView;
 
-public class SoundListAdapter extends ArrayAdapter<SoundDto> {
+public class SoundRhythmGridAdapter extends ArrayAdapter<SoundRythmData> {
 	protected LayoutInflater mInflater;
-	private List<SoundDto> mItems;
+	private List<SoundRythmData> mItems;
 	ViewHolder viewHolder;
 
 
 	static class ViewHolder{
-		public TextView TextSoundName;
-		public ImageView ImageBarColor;
+		public ImageView ImageRhytmView;
 	}
 
 	/**
@@ -29,10 +27,11 @@ public class SoundListAdapter extends ArrayAdapter<SoundDto> {
 	 * @param rowLayoutResourceId	リソースID
 	 * @param items					アイテム
 	 */
-	public SoundListAdapter(Context context,List<SoundDto> items) {
+	public SoundRhythmGridAdapter(Context context,List<SoundRythmData> items) {
 		super(context, 0, items);
 		this.mItems = items;
 		this.mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
 	}
 
 
@@ -40,19 +39,19 @@ public class SoundListAdapter extends ArrayAdapter<SoundDto> {
 	 * ビューの表示、ビューの取得が求められるたび呼び出される
 	 */
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public View getView(final int position, View convertView, ViewGroup parent) {
 		final View view ;
 		if (convertView == null) {
-			view = mInflater.inflate(R.layout.sound_list_item, null);
+			view = mInflater.inflate(R.layout.sound_edit_view_grid_item, null);
 			viewHolder = new ViewHolder();
-			viewHolder.TextSoundName = (TextView)view.findViewById(R.id.SoundListItemText);
-			viewHolder.ImageBarColor = (ImageView)view.findViewById(R.id.SoundListItemColorBar);
+			viewHolder.ImageRhytmView = (ImageView)view.findViewById(R.id.SoundEditViewGridItemImageView);
 			view.setTag(viewHolder);
 		} else {
 			view = convertView;
    		}
-		((ViewHolder)view.getTag()).TextSoundName.setText("Sound" + mItems.get(position).getId());
-		((ViewHolder)view.getTag()).ImageBarColor.setColorFilter(mItems.get(position).getSoundColor(),android.graphics.PorterDuff.Mode.SRC_ATOP);
+		if(mItems.get(position).getSoundId() >= 0)
+			((ViewHolder)view.getTag()).ImageRhytmView.setColorFilter(mItems.get(position).getFilterColor());
+
 		return view;
 	}
 }

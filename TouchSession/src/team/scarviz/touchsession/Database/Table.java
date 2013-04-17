@@ -32,6 +32,7 @@ public class Table {
 		public static final String COMPOSITION_JSON = "COMPOSITION_JSON";
 		public static final String TITLE = "TITLE";
 		public static final String EDITING = "EDITING";
+		public static final String COMP_MS_ID = "COMP_MS_ID";
 
 		public static final KeyMap[] COLUMNS ={
 			new KeyMap(ID,Type.Int),
@@ -39,6 +40,8 @@ public class Table {
 			new KeyMap(COMPOSITION_JSON,Type.String),
 			new KeyMap(TITLE,Type.String),
 			new KeyMap(EDITING,Type.Int),
+			new KeyMap(COMP_MS_ID,Type.Int),
+
 		};
 	}
 
@@ -64,6 +67,7 @@ public class Table {
 					Table.CompositionData.RHYTHM + " real not null, " +
 					Table.CompositionData.COMPOSITION_JSON + " text, " +
 					Table.CompositionData.TITLE + " text, " +
+					Table.CompositionData.COMP_MS_ID + " integer, " +
 					Table.CompositionData.EDITING + " integer not null )");
 		}
 		finally

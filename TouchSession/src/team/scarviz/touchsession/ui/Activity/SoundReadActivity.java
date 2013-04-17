@@ -1,6 +1,12 @@
 package team.scarviz.touchsession.ui.Activity;
 
 
+import net.kazzz.felica.FeliCaException;
+import net.kazzz.felica.FeliCaTag;
+import net.kazzz.felica.command.ReadResponse;
+import net.kazzz.felica.lib.FeliCaLib;
+import net.kazzz.felica.lib.FeliCaLib.ServiceCode;
+import net.kazzz.felica.suica.Suica;
 import team.scarviz.touchsession.R;
 import team.scarviz.touchsession.ui.Fragment.SoundReadFragment;
 import android.app.Activity;
@@ -23,11 +29,16 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 
 public class SoundReadActivity extends FragmentActivity {
 
 	private NfcAdapter mNfcAdapter;
 	private PendingIntent mPendingIntent;
+	private Tag mNfcTag;
+
+
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -37,100 +48,106 @@ public class SoundReadActivity extends FragmentActivity {
         String action = intent.getAction();
 
 		FragmentManager fm = getSupportFragmentManager();
+		SoundReadFragment fragment;
 		if(fm.findFragmentById(R.id.rootLayout) != null){
+			fragment = (SoundReadFragment)fm.findFragmentById(R.id.rootLayout);
 		}
 		else{
 			FragmentTransaction ft = fm.beginTransaction();
-			SoundReadFragment fragment = SoundReadFragment.newInstance();
+			fragment = SoundReadFragment.newInstance();
 			ft.add(R.id.rootLayout, fragment);
 			ft.commit();
 		}
 
-    	Tag tag = (Tag) intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-    	if(tag != null){
-    	NfcF techF = NfcF.get(tag);
-    	byte[] idm = intent.getByteArrayExtra(NfcAdapter.EXTRA_ID);
-    	byte[] pmm = techF.getManufacturer();
-    	byte[] systemCode = techF.getSystemCode();
+    	mNfcTag = (Tag) intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+    	if(mNfcTag != null){
+    		try{
+    		long lastblance = readHistoryData();
+    		fragment.setmZandaka((int)lastblance);
+    		}catch(Exception e){
 
-    	tvRewrite(idm,pmm,systemCode);
+    		}
     	}
 
 
-    	 if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action)
+/*    	 if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action)
     		        || NfcAdapter.ACTION_TECH_DISCOVERED.equals(action)
     		        || NfcAdapter.ACTION_TAG_DISCOVERED.equals(action)) {
-    		            // IDmÇï\é¶Ç≥ÇπÇÈ
-    		            String idm = getIdm(getIntent());
-    		            if (idm != null) {
-    		            	((SoundReadFragment)fm.findFragmentById(R.id.rootLayout)).setText(idm);
-    		            }
+    		            // IDm„ÇíË°®Á§∫„Åï„Åõ„Çã
+    	//	            	((SoundReadFragment)fm.findFragmentById(R.id.rootLayout)).setText(idm);
+
+    	//	            }
     		        }
     		mNfcAdapter = NfcAdapter.getDefaultAdapter(getApplicationContext());
     		mPendingIntent = PendingIntent.getActivity(getApplicationContext(), 0,
     		new Intent(getApplicationContext(), getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-
+*/
 	}
 
-	private String getIdm(Intent intent) {
-			String idm = null;
-			StringBuffer idmByte = new StringBuffer();
-			byte[] rawIdm = intent.getByteArrayExtra(NfcAdapter.EXTRA_ID);
-			if (rawIdm != null) {
-			for (int i = 0; i < rawIdm.length; i++) {
-			idmByte.append(Integer.toHexString(rawIdm[i] & 0xff));
-			}
-			idm = idmByte.toString();
-			}
-				return idm;
-	}
+/**
+ * FeliCa ‰ΩøÁî®Â±•Ê≠¥„ÇíË™≠„ÅøËæº„Åø„Åæ„Åô
+ *
+ * @return
+ */
+protected long readHistoryData() throws Exception {
 
-	public void tvRewrite(byte[] idm, byte[] pmm, byte[] systemCode) {
+    try {
+        FeliCaTag f = new FeliCaTag(this.mNfcTag);
 
-        StringBuffer sb = new StringBuffer();
-        sb.append("IDm: ");
-        for(int i = 0; i < idm.length; i++) {
-        	sb.append(String.format("%02X",idm[i]));
-        }
-        sb.append("\n");
-        sb.append("PMm: ");
-        for(int i = 0; i < pmm.length; i++) {
-        	sb.append(String.format("%02X",pmm[i]));
-        }
-        sb.append("\n");
-        sb.append("System Code: ");
-        for(int i = 0; i < systemCode.length; i++) {
-        	sb.append(String.format("%02X",systemCode[i]));
-        }
-        sb.append("\n");
+        //polling „ÅØ IDm„ÄÅPMm„ÇíÂèñÂæó„Åô„Çã„ÅÆ„Å´ÂøÖË¶Å
+        f.polling(FeliCaLib.SYSTEMCODE_PASMO);
 
-        FragmentManager fm = getSupportFragmentManager();
-        if(fm.findFragmentById(R.id.rootLayout) != null){
-        	((SoundReadFragment)fm.findFragmentById(R.id.rootLayout)).setText(sb.toString());
+        //read
+        ServiceCode sc = new ServiceCode(FeliCaLib.SERVICE_SUICA_HISTORY);
+        byte addr = 0;
+        ReadResponse result = f.readWithoutEncryption(sc, addr);
+
+        StringBuilder sb = new StringBuilder();
+        while ( result != null && result.getStatusFlag1() == 0  ) {
+      //      sb.append("Â±•Ê≠¥ No.  " + (addr + 1) + "\n");
+       //     sb.append("---------\n");
+       //     sb.append("\n");
+            Suica.History s = new Suica.History(result.getBlockData(), this);
+      //      sb.append(s.getBalance());
+      //      sb.append("---------------------------------------\n");
+      //      sb.append("\n");
+            return s.getBalance();
+
+
+//            addr++;
+            //Log.d(TAG, "addr = " + addr);
+//            result = f.readWithoutEncryption(sc, addr);
         }
 
-	}
-
+        String str = sb.toString();
+        Log.d("TAG", str);
+        return -1;
+    } catch (FeliCaException e) {
+        e.printStackTrace();
+        Log.e("TAG", "readHistoryData", e);
+        throw e;
+    }
+}
 
 
 					/**
-				* ÉtÉHÉAÉOÉâÉEÉìÉhÉfÉBÉXÉpÉbÉ`ÉVÉXÉeÉÄÇ≈ÅAÉAÉvÉäãNìÆéûÇ…ÇÕóDêÊìIÇ…NFCÇÃÉCÉìÉeÉìÉgÇéÊìæÇ∑ÇÈÇÊÇ§Ç…ê›íËÇ∑ÇÈ
+				* „Éï„Ç©„Ç¢„Ç∞„É©„Ç¶„É≥„Éâ„Éá„Ç£„Çπ„Éë„ÉÉ„ÉÅ„Ç∑„Çπ„ÉÜ„É†„Åß„ÄÅ„Ç¢„Éó„É™Ëµ∑ÂãïÊôÇ„Å´„ÅØÂÑ™ÂÖàÁöÑ„Å´NFC„ÅÆ„Ç§„É≥„ÉÜ„É≥„Éà„ÇíÂèñÂæó„Åô„Çã„Çà„ÅÜ„Å´Ë®≠ÂÆö„Åô„Çã
 				*/
 				private void setNfcIntentFilter(Activity activity, NfcAdapter nfcAdapter, PendingIntent seder) {
-				// NDEF typeéwíË
+				// NDEF typeÊåáÂÆö
 				IntentFilter typeNdef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
 				try {
 				typeNdef.addDataType("*/*");
 				} catch (MalformedMimeTypeException e) {
 				e.printStackTrace();
 				}
-				// NDEF ÉXÉLÅ[É}(http)éwíË
+				// NDEF „Çπ„Ç≠„Éº„Éû(http)ÊåáÂÆö
 				IntentFilter httpNdef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
 				httpNdef.addDataScheme("http");
 				IntentFilter[] filters = new IntentFilter[] {
 				typeNdef, httpNdef
 				};
-				// TECHéwíË
+				// TECHÊåáÂÆö
 				String[][] techLists = new String[][] {
 				new String[] { IsoDep.class.getName() },
 				new String[] { NfcA.class.getName() },

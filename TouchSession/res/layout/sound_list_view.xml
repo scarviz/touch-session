@@ -4,10 +4,11 @@
     android:layout_height="match_parent"
     android:orientation="horizontal" >
 
-    <Button
-        android:id="@+id/button1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Button" />
+    <Scroll
+    <ListView
+        android:id="@+id/SoundListViewList"
+        android:layout_height="match_parent"
+        android:layout_width="140dp"
+        ></ListView>
 
 </LinearLayout>
