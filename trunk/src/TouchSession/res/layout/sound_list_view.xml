@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="horizontal" >
 
-    <Scroll
+
     <ListView
         android:id="@+id/SoundListViewList"
         android:layout_height="match_parent"
