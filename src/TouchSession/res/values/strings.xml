@@ -1,0 +1,8 @@
+<resources>
+
+    <string name="app_name">TouchSession</string>
+
+    <string name="msgNfcReadSuccessServerGetData">読み込み完了しました\nサーバから音データを取得します</string>
+    <string name="msgServerSoundDataGetSuccess">音データを取得しました\n編集画面から編集できます</string>
+
+</resources>
