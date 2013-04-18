@@ -12,6 +12,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
+import team.scarviz.touchsession.Dto.CompositionDto;
 import team.scarviz.touchsession.Dto.SoundDto;
 import android.content.Context;
 
@@ -40,6 +41,29 @@ public class HttpUtility {
 			}
 
 			return sDto;
+	}
+
+	/**
+	 * Composition Data Upload & Download
+	 * @param con
+	 * @param zandaka
+	 * @return
+	 */
+	public static CompositionDto uploadCompositionData(Context con , CompositionDto comp){
+			HttpClient httpclient = new DefaultHttpClient();
+			CompositionDto cDto = null;
+			try {
+//					List<NameValuePair> params = new ArrayList<NameValuePair>();
+//					params.add(new BasicNameValuePair("zandaka", StringUtility.toString(zandaka)));
+//					String result = post(httpclient,"url",params,false);
+//				String json = get(httpclient,"url?key=" + result,false);
+				cDto = new CompositionDto();
+			} catch (Exception e) {
+			} finally {
+				httpclient.getConnectionManager().shutdown();
+			}
+
+			return cDto;
 	}
 
 
