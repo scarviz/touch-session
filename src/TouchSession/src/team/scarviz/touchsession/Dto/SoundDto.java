@@ -7,6 +7,7 @@ import team.scarviz.touchsession.Database.SQLBase;
 import team.scarviz.touchsession.Database.SQLItem;
 import team.scarviz.touchsession.Database.Table;
 import team.scarviz.touchsession.Database.TableAccess;
+import team.scarviz.touchsession.Utility.StringUtility;
 import android.content.ContentValues;
 import android.content.Context;
 import android.graphics.Color;
@@ -66,7 +67,6 @@ public class SoundDto {
 	}
 
 	public SoundDto() {
-		// TODO é©ìÆê∂ê¨Ç≥ÇÍÇΩÉRÉìÉXÉgÉâÉNÉ^Å[ÅEÉXÉ^Éu
 	}
 
 	public SoundDto(SQLItem item){
@@ -82,7 +82,7 @@ public class SoundDto {
 		List<SoundDto> retItem = new ArrayList<SoundDto>();
 		SQLBase sql = TableAccess.getInstance(con);
 		List<SQLItem> items = sql.select(sql, Table.SoundData.TABLE, Table.SoundData.COLUMNS, null, null,null,null,null);
-		//ÇŸÇÒÇ∆ÇÕNULLCHECKÇ¢ÇÈ
+		//ÔøΩŸÇÔøΩ∆ÇÔøΩNULLCHECKÔøΩÔøΩÔøΩÔøΩ
 
 		int count = 0;
 		for(SQLItem item : items){
@@ -115,5 +115,19 @@ public class SoundDto {
 			return true;
 		else
 			return false;
+	}
+
+	public static  SoundDto getSoundData(Context con , int soundId){
+		SQLBase sql = TableAccess.getInstance(con);
+		List<SQLItem> item = sql.select(sql,
+				Table.SoundData.TABLE,
+				Table.SoundData.COLUMNS,
+				Table.SoundData.SOUND_ID +"=?",
+				new String[]{StringUtility.toString(soundId)}, null,null,null);
+
+		if(item == null || item.size() <= 0) return null;
+
+		return new SoundDto(item.get(0));
+
 	}
 }

@@ -3,17 +3,18 @@ package team.scarviz.touchsession.Adapter;
 import java.util.List;
 
 import team.scarviz.touchsession.R;
-import team.scarviz.touchsession.Data.SoundRythmData;
+import team.scarviz.touchsession.Data.SoundRhythmData;
 import android.content.Context;
+import android.graphics.PorterDuff.Mode;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
-public class SoundRhythmGridAdapter extends ArrayAdapter<SoundRythmData> {
+public class SoundRhythmGridAdapter extends ArrayAdapter<SoundRhythmData> {
 	protected LayoutInflater mInflater;
-	private List<SoundRythmData> mItems;
+	private List<SoundRhythmData> mItems;
 	ViewHolder viewHolder;
 
 
@@ -22,12 +23,12 @@ public class SoundRhythmGridAdapter extends ArrayAdapter<SoundRythmData> {
 	}
 
 	/**
-	 * ƒRƒ“ƒXƒgƒ‰ƒNƒ^
-	 * @param context			ƒRƒ“ƒeƒLƒXƒg
-	 * @param rowLayoutResourceId	ƒŠƒ\[ƒXID
-	 * @param items					ƒAƒCƒeƒ€
+	 * ï¿½Rï¿½ï¿½ï¿½Xï¿½gï¿½ï¿½ï¿½Nï¿½^
+	 * @param context			ï¿½Rï¿½ï¿½ï¿½eï¿½Lï¿½Xï¿½g
+	 * @param rowLayoutResourceId	ï¿½ï¿½ï¿½\ï¿½[ï¿½XID
+	 * @param items					ï¿½Aï¿½Cï¿½eï¿½ï¿½
 	 */
-	public SoundRhythmGridAdapter(Context context,List<SoundRythmData> items) {
+	public SoundRhythmGridAdapter(Context context,List<SoundRhythmData> items) {
 		super(context, 0, items);
 		this.mItems = items;
 		this.mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -36,7 +37,7 @@ public class SoundRhythmGridAdapter extends ArrayAdapter<SoundRythmData> {
 
 
 	/**
-	 * ƒrƒ…[‚Ì•\¦Aƒrƒ…[‚Ìæ“¾‚ª‹‚ß‚ç‚ê‚é‚½‚ÑŒÄ‚Ño‚³‚ê‚é
+	 * ï¿½rï¿½ï¿½ï¿½[ï¿½Ì•\ï¿½ï¿½ï¿½Aï¿½rï¿½ï¿½ï¿½[ï¿½Ìæ“¾ï¿½ï¿½ï¿½ï¿½ï¿½ß‚ï¿½ï¿½é‚½ï¿½ÑŒÄ‚Ñoï¿½ï¿½ï¿½ï¿½ï¿½
 	 */
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
@@ -50,7 +51,7 @@ public class SoundRhythmGridAdapter extends ArrayAdapter<SoundRythmData> {
 			view = convertView;
    		}
 		if(mItems.get(position).getSoundId() >= 0)
-			((ViewHolder)view.getTag()).ImageRhytmView.setColorFilter(mItems.get(position).getFilterColor());
+			((ViewHolder)view.getTag()).ImageRhytmView.setColorFilter(mItems.get(position).getFilterColor(),Mode.SRC_ATOP);
 
 		return view;
 	}

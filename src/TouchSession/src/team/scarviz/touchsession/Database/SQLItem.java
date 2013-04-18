@@ -26,7 +26,7 @@ public class SQLItem {
 		for(KeyMap arg : args)
 		{
 		if(StringUtility.compare(arg.getKey(),column))
-			new Exception("‚·‚Å‚É’Ç‰Á‚³‚ê‚Ä‚¢‚é");
+			new Exception("ï¿½ï¿½ï¿½Å‚É’Ç‰ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½");
 		}
 		KeyMap key = new KeyMap();
 		key.setKey(column);
@@ -48,7 +48,7 @@ public class SQLItem {
 	}
 
 	/**
-	 * •¶Žš—ñ‚Ì•Ô‹p
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì•Ô‹p
 	 * @param column
 	 * @return
 	 */
@@ -61,7 +61,20 @@ public class SQLItem {
 	}
 
 	/**
-	 * Int‚Ì•Ô‹p
+	 * Intï¿½Ì•Ô‹p
+	 * @param column
+	 * @return
+	 */
+	public double getValueDouble(String column)
+	{
+		KeyMap map = getValue(column);
+		if(map != null)
+			return map.getValueReal();
+		return Double.MIN_VALUE;
+	}
+
+	/**
+	 * Intï¿½Ì•Ô‹p
 	 * @param column
 	 * @return
 	 */
@@ -74,7 +87,7 @@ public class SQLItem {
 	}
 
 	/**
-	 * Long‚Ì•Ô‹p
+	 * Longï¿½Ì•Ô‹p
 	 * @param column
 	 * @return
 	 */
@@ -87,7 +100,7 @@ public class SQLItem {
 	}
 
 	/**
-	 * Boolean‚Ì•Ô‹p
+	 * Booleanï¿½Ì•Ô‹p
 	 * @param column
 	 * @param defaultVal
 	 * @return
@@ -102,7 +115,7 @@ public class SQLItem {
 	}
 
 	/**
-	 * Blob‚Ì•Ô‹p
+	 * Blobï¿½Ì•Ô‹p
 	 * @param column
 	 * @return
 	 */
