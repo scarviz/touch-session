@@ -31,8 +31,6 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -125,6 +123,10 @@ public class SoundEditFragment extends Fragment {
 	public void setSound(SoundDto sDto){
 		mSoundData = sDto;
 		setSoundView(getView());
+		GridView gView = (GridView)getView().findViewById(R.id.SoundEditViewGridView);
+		SoundRhythmGridAdapter adapter = (SoundRhythmGridAdapter)gView.getAdapter();
+		adapter.setSoundDto(mSoundData);
+
 	}
 
 	private void setSoundView(View v){
@@ -172,9 +174,8 @@ public class SoundEditFragment extends Fragment {
 		});
 
 		GridView gView = (GridView)v.findViewById(R.id.SoundEditViewGridView);
-		SoundRhythmGridAdapter adapter = new SoundRhythmGridAdapter(getActivity(), mRhythmData);
+		SoundRhythmGridAdapter adapter = new SoundRhythmGridAdapter(getActivity(), mRhythmData,mSoundData);
 		gView.setAdapter(adapter);
-		gView.setOnItemClickListener(new onGridItemClickListener());
 		v.findViewById(R.id.SoundEditViewbtnPlayStop).setOnClickListener(new onPlayStopButtonClickListener());
 
 	}
@@ -187,15 +188,7 @@ public class SoundEditFragment extends Fragment {
 		}
 	}
 
-	private class onGridItemClickListener implements OnItemClickListener{
-		@Override
-		public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
-		   SoundRhythmGridAdapter adapter = 	(SoundRhythmGridAdapter)adapterView.getAdapter();
-		   adapter.getItem(pos).setSoundId(mSoundData.getSoundId());
-		   adapter.getItem(pos).setFilterColor(mSoundData.getSoundColor());
-		   adapter.notifyDataSetChanged();
-		}
-	}
+
 
 	private void play(){
 		setPlayEnabled(false);
