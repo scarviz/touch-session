@@ -69,7 +69,7 @@ public class MainActivity extends FragmentActivity {
 	}
 
 	public void transitSesssionEditFragment(){
-		Intent in = new Intent(MainActivity.this,SessionEditActivity.class);
+		Intent in = new Intent(MainActivity.this,SessionPlayActivity.class);
 		in.setAction(Intent.ACTION_VIEW);
 		startActivity(in);
 	}

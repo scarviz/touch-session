@@ -148,7 +148,6 @@ public class SoundEditFragment extends Fragment {
 	}
 
 	public void setPlayEnabled(boolean bool){
-		getView().findViewById(R.id.SoundEditViewbtnPlayStop).setEnabled(bool);
 		getView().findViewById(R.id.SoundEditViewbtnSoundItem).setEnabled(bool);
 		getView().findViewById(R.id.SoundEditViewGridView).setEnabled(bool);
 		getView().findViewById(R.id.SoundEditViewTimeSeekBar).setEnabled(bool);
@@ -185,6 +184,8 @@ public class SoundEditFragment extends Fragment {
 		public void onClick(View v) {
 			if(!isPlay)
 				play();
+			else
+				stop();
 		}
 	}
 
@@ -206,7 +207,16 @@ public class SoundEditFragment extends Fragment {
 			int key = mSePlayer.load(sDto.getSoundFilePath(), 0);
 			mSoundList.put(sDto.getSoundId(), key);
 		}
+		isPlay = true;
+	}
 
+	private void stop(){
+		mSePlayer.release();
+		if(mTimer != null)
+			mTimer.cancel();
+	    mTimer = null;
+	    setPlayEnabled(false);
+		isPlay = false;
 	}
 
 	/**
@@ -253,17 +263,12 @@ public class SoundEditFragment extends Fragment {
 	@Override
 	public void onResume() {
 	    super.onResume();
-	    setPlayEnabled(true);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-		mSePlayer.release();
-		if(mTimer != null)
-			mTimer.cancel();
-	    mTimer = null;
-	    setPlayEnabled(false);
+		stop();
 	}
 
 
