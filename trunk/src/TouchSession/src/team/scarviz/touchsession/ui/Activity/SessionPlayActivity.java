@@ -2,13 +2,13 @@ package team.scarviz.touchsession.ui.Activity;
 
 
 import team.scarviz.touchsession.R;
-import team.scarviz.touchsession.ui.Fragment.SoundReadFragment;
+import team.scarviz.touchsession.ui.Fragment.SessionPlayFragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
-public class SessionEditActivity extends FragmentActivity {
+public class SessionPlayActivity extends FragmentActivity {
 
 
 	@Override
@@ -21,10 +21,9 @@ public class SessionEditActivity extends FragmentActivity {
 		}
 		else{
 			FragmentTransaction ft = fm.beginTransaction();
-			SoundReadFragment fragment = SoundReadFragment.newInstance();
+			SessionPlayFragment fragment = SessionPlayFragment.newInstance();
 			ft.add(R.id.rootLayout, fragment);
 			ft.commit();
 		}
-
 	}
 }

@@ -51,7 +51,7 @@
             android:name=".ui.Activity.SoundEditActivity" android:screenOrientation="landscape" android:label="@string/app_name" >
         </activity>
         <activity
-            android:name=".ui.Activity.SessionEditActivity" android:screenOrientation="landscape" android:label="@string/app_name" >
+            android:name=".ui.Activity.SessionPlayActivity" android:screenOrientation="landscape" android:label="@string/app_name" >
         </activity>
     </application>
 </manifest>
