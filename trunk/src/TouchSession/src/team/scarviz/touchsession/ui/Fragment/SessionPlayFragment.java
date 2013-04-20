@@ -5,6 +5,7 @@ import java.util.List;
 import team.scarviz.touchsession.R;
 import team.scarviz.touchsession.Adapter.ComposeListAdapter;
 import team.scarviz.touchsession.Data.CompositionAdapterData;
+import team.scarviz.touchsession.Listener.AudioPlayStopListener;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class SessionPlayFragment extends Fragment {
 
@@ -22,7 +24,7 @@ public class SessionPlayFragment extends Fragment {
 	ProgressDialogFragment mProgressDialog;
 	boolean isPlay = false;
 	boolean isDialogActive = false;
-
+	int stopCount = 0;
 
 
 	@Override
@@ -36,8 +38,12 @@ public class SessionPlayFragment extends Fragment {
 			Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.session_play_view, container,false);
 		setHasOptionsMenu(true);
-		if(mCompositionDatas == null)
+		if(mCompositionDatas == null){
 			mCompositionDatas= CompositionAdapterData.getAllCompositionData(getActivity());
+			for(CompositionAdapterData data : mCompositionDatas){
+				data.setAudioPlayStopListener(new onAudioPlayStopListener());
+			}
+		}
 		initView(v);
 
 		return v;
@@ -92,18 +98,40 @@ public class SessionPlayFragment extends Fragment {
 		public void onClick(View v) {
 			if(!isPlay){
 				for(CompositionAdapterData data : mCompositionDatas){
-					data.play(getActivity());
+					if(data.isCheck()){
+						data.play(getActivity());
+						isPlay = true;
+					}
+				}
+
+				if(!isPlay){
+					//not checked
+					Toast.makeText(getActivity(), "一つも選択されていません", Toast.LENGTH_SHORT).show();
 				}
 			}
 			else{
 				for(CompositionAdapterData data : mCompositionDatas){
-					data.play(getActivity());
+					data.stop();
 				}
 			}
 		}
 	}
 
 
+	private class onAudioPlayStopListener implements AudioPlayStopListener{
+		@Override
+		public void onStop(int soundId) {
+			boolean isNowPlaying = false;
+			for(CompositionAdapterData adapter : mCompositionDatas){
+				if(!adapter.isCheck()) continue;
+				if(adapter.isPlay())
+					isNowPlaying = true;
+			}
+
+			if(!isNowPlaying)
+				isPlay = false;
+		}
+	}
 
 
 
@@ -119,5 +147,4 @@ public class SessionPlayFragment extends Fragment {
 			data.stop();
 		}
 	}
-
 }
