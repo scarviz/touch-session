@@ -1,0 +1,29 @@
+/**
+     * JSONのregistration_idに値があれば、メンバ情報を更新する
+     * @param resJson
+     * @param members
+     * @throws JSONException
+     */
+    private void UpdateMemberInfo(JSONObject resJson, ArrayList<MemberInfo> members) throws JSONException{
+    	Log.d("ContactActivity.UpdateMemberInfo", "【Contact send result [resJson]】:" + resJson.toString());
+    	JSONArray reslist = resJson.getJSONArray("results");
+		if (reslist != null && reslist.length() > 0) {
+			for (int i = 0; i < reslist.length(); i++) {
+				JSONObject jobj = reslist.getJSONObject(i);
+                    String regID;
+					try {
+						regID = jobj.getString(Define.KEY_RESULT_REG_ID);
+					} catch (JSONException e) {
+						Log.d("ContactAct", "missing registration_ids in GCM");
+						continue;
+					}
+				
+                    // regIDに値がある場合は、変更されているので、更新する
+					if (regID != null && !regID.isEmpty()) {
+						TouringNaviSQL.UpdateMemberVendorID(
+								ContactActivity.this,
+								members.get(i).MemberId, regID);
+					}
+			}
+		}
+    }
