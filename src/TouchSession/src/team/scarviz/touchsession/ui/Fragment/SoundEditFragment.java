@@ -34,6 +34,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 public class SoundEditFragment extends Fragment {
@@ -95,9 +96,10 @@ public class SoundEditFragment extends Fragment {
 					public void onPositiveClick(View v) {
 						CompositionDto compData = new CompositionDto();
 						compData.setTitle(((EditText)getView().findViewById(R.id.SoundEditViewbtnComposeTitle)).getText().toString());
-
+						compData.setRhythm(((SeekBar)getView().findViewById(R.id.SoundEditViewTimeSeekBar)).getProgress());
 						try{
 							compData.setCompositionJson(JsonUtil.createJsonRhythm(mRhythmData));
+							compData.insert(getActivity());
 						} catch (JSONException e) {
 							Toast.makeText(getActivity(), "JSONデータの生成に失敗", Toast.LENGTH_SHORT).show();
 							return;
@@ -215,7 +217,7 @@ public class SoundEditFragment extends Fragment {
 		if(mTimer != null)
 			mTimer.cancel();
 	    mTimer = null;
-	    setPlayEnabled(false);
+	    setPlayEnabled(true);
 		isPlay = false;
 	}
 
@@ -229,6 +231,12 @@ public class SoundEditFragment extends Fragment {
 		public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
 			//タイマーの初期化処理
 			mCompletedCount++;
+			int millisec = 1000;
+			int work = ((SeekBar)getView().findViewById(R.id.SoundEditViewTimeSeekBar)).getProgress() - 1000;
+			if(work < 0)
+				work /= 2;
+			millisec += work;
+
 			//全てのSEが読み込まれたらタイマー開始
 			if(mCompletedCount >= mSoundList.size()){
 				mTimer = new Timer();
@@ -255,7 +263,7 @@ public class SoundEditFragment extends Fragment {
 			                }
 			            });
 			        }
-			    }, 100, 1000);
+			    }, 100, millisec);
 			}
 		}
 	}

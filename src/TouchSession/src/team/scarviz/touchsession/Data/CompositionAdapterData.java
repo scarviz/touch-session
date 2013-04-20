@@ -8,6 +8,7 @@ import java.util.TimerTask;
 
 import team.scarviz.touchsession.Dto.CompositionDto;
 import team.scarviz.touchsession.Dto.SoundDto;
+import team.scarviz.touchsession.Listener.AudioPlayStopListener;
 import team.scarviz.touchsession.Utility.JsonUtil;
 import android.content.Context;
 import android.media.AudioManager;
@@ -19,8 +20,9 @@ import android.widget.Toast;
 
 public class CompositionAdapterData extends CompositionDto {
 
+	AudioPlayStopListener listener;
 	private boolean isCheck;
-
+	private boolean isPlay = false;
 	SoundPool mSePlayer = null;
 	HashMap<Integer, Integer> mSoundList;
 	private static int MAX_STREAMS = 10;
@@ -29,9 +31,17 @@ public class CompositionAdapterData extends CompositionDto {
 	Handler mHandler = new Handler();
 	int mCompletedCount = 0;
 
-
 	List<SoundRhythmData> mRhythmData = null;
 
+
+
+	public boolean isPlay() {
+		return isPlay;
+	}
+
+	public void setPlay(boolean isPlay) {
+		this.isPlay = isPlay;
+	}
 
 	public boolean isCheck() {
 		return isCheck;
@@ -68,6 +78,7 @@ public class CompositionAdapterData extends CompositionDto {
 
 
 	public void play(Context con){
+		isPlay = true;
 		mSoundList = new HashMap<Integer, Integer>();
 		mCompletedCount = 0;
 		mSePlayer =  new SoundPool(MAX_STREAMS, AudioManager.STREAM_MUSIC, 0);
@@ -88,11 +99,13 @@ public class CompositionAdapterData extends CompositionDto {
 	}
 
 	public void stop(){
-		mSePlayer.release();
+		if(mSePlayer != null)
+			mSePlayer.release();
 		if(mTimer != null)
 			mTimer.cancel();
 	    mTimer = null;
-
+	    isPlay = false;
+	    if(listener != null) listener.onStop(getComp_ms_id());
 	}
 
 	/**
@@ -116,6 +129,14 @@ public class CompositionAdapterData extends CompositionDto {
 	private class onSoundLoadCompletedListener implements OnLoadCompleteListener{
 		@Override
 		public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
+
+			//タイマーの初期化処理
+			mCompletedCount++;
+			int millisec = 1000;
+			int work = (int)getRhythm() - 1000;
+			if(work < 0)
+				work /= 2;
+			millisec += work;
 			//タイマーの初期化処理
 			mCompletedCount++;
 			//全てのSEが読み込まれたらタイマー開始
@@ -129,9 +150,7 @@ public class CompositionAdapterData extends CompositionDto {
 			            mHandler.post( new Runnable() {
 			                public void run() {
 			                	if(mSelectedViewIndex >= mRhythmData.size()){
-			                    	mTimer.cancel();
-			                    	mTimer = null;
-			                    	mSePlayer.release();
+			                		stop();
 			                    	return;
 			                    }
 			                    if(mRhythmData.get(mSelectedViewIndex).getSoundId()>= 0){
@@ -142,9 +161,17 @@ public class CompositionAdapterData extends CompositionDto {
 			                }
 			            });
 			        }
-			    }, 100, 1000);
+			    }, 100, millisec);
 			}
 		}
 	}
+
+    public void setAudioPlayStopListener(AudioPlayStopListener listener) {
+        this.listener = listener;
+    }
+
+    public void removeDialogListener() {
+        this.listener = null;
+    }
 
 }
