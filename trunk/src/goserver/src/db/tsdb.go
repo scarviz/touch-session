@@ -164,3 +164,80 @@ func InsertNWNotifyInfoTb(compdata define.CompositionData) {
 	// ロック終了
 	lockDB.Unlock()
 }
+
+/*
+音データのファイルパスを取得する
+*/
+func GetSoundFileName(soundid int) (filename string) {
+	// ロック開始
+	lockDB.Lock()
+
+	logger.LogPrintln(logger.DBG, "[GetSoundFileName] soundid：", soundid)
+	// SELECT文作成
+	sqlstr := "SELECT SOUND_FILE_PATH path FROM SOUND_DATA_TB WHERE SOUND_ID = %d"
+
+	// Query実行(パラメータは可変)
+	rows, res, iserr := checkedResult(DBConn.Query(sqlstr, soundid))
+
+	size := 0
+	if iserr {
+		fmt.Println("[GetSoundFileName] ファイルパス取得に失敗しました")
+		logger.LogPrintln(logger.ERR, "[GetSoundFileName] ファイルパス取得に失敗しました")
+	} else {
+		size = len(rows)
+		logger.LogPrintln(logger.DBG, "[GetSoundFileName] 取得件数：", size)
+	}
+
+	// カラムのマッピング
+	path := res.Map("path")
+
+	filename = ""
+	for _, row := range rows {
+		filename = row.Str(path)
+		if filename != "" {
+			break
+		}
+	}
+
+	// ロック終了
+	lockDB.Unlock()
+
+	return
+}
+
+/*
+音データのIDをファイルパスから取得する
+*/
+func GetSoundIDByFileName(filename string) (soundid int) {
+	// ロック開始
+	lockDB.Lock()
+
+	logger.LogPrintln(logger.DBG, "[GetSoundIDByFileName] filename：", filename)
+	// SELECT文作成
+	sqlstr := "SELECT SOUND_ID id FROM SOUND_DATA_TB WHERE SOUND_FILE_PATH = '%s'"
+
+	// Query実行(パラメータは可変)
+	rows, res, iserr := checkedResult(DBConn.Query(sqlstr, filename))
+
+	size := 0
+	if iserr {
+		fmt.Println("[GetSoundIDByFileName] ファイルパス取得に失敗しました")
+		logger.LogPrintln(logger.ERR, "[GetSoundIDByFileName] ファイルパス取得に失敗しました")
+	} else {
+		size = len(rows)
+		logger.LogPrintln(logger.DBG, "[GetSoundIDByFileName] 取得件数：", size)
+	}
+
+	// カラムのマッピング
+	id := res.Map("id")
+
+	soundid = 0
+	for _, row := range rows {
+		soundid = row.Int(id)
+	}
+
+	// ロック終了
+	lockDB.Unlock()
+
+	return
+}

@@ -1,15 +1,25 @@
 package page
 
 import (
+	"db"
+	"define"
 	"encoding/binary"
+	"encoding/json"
+	"fmt"
 	"logger"
 	"math"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
+	"sync"
 	"wave"
 )
+
+/*
+ミューテックス
+*/
+var lockPage sync.Mutex
 
 /*
 NFCデータから音データを取得するページ
@@ -26,7 +36,9 @@ func NFCSound(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Add("Content-type", "application/force-download")
+	// ロック開始
+	lockPage.Lock()
+
 	// waveファイル名
 	filename := filepath.Join("sounddata", "nfc"+nfcdata+"Wave.wav")
 
@@ -37,7 +49,18 @@ func NFCSound(w http.ResponseWriter, r *http.Request) {
 	if staterr == nil {
 		logger.LogPrintln(logger.DBG, "[NFCSound] already wave file:", filename)
 
-		http.ServeFile(w, r, filename)
+		// 音データIDを取得する
+		soundid := db.GetSoundIDByFileName(filename)
+
+		// ロック終了
+		lockPage.Unlock()
+
+		// IDをJSON形式にする
+		res := getSoundIDResJSONStr(int(soundid))
+		w.Header().Add("Content-type", "application/json")
+		// 検索結果を返す
+		fmt.Fprintf(w, res)
+
 		return
 	}
 
@@ -54,5 +77,46 @@ func NFCSound(w http.ResponseWriter, r *http.Request) {
 	//wave.CreateWaveFile(filename, adjust, binary.BigEndian)
 	wave.CreateWaveFile(filename, adjust, binary.LittleEndian)
 
+	// 音データをDBに登録する
+	sid := db.InsertSoundTb(filename)
+
+	// ロック終了
+	lockPage.Unlock()
+
+	// IDをJSON形式にする
+	res := getSoundIDResJSONStr(int(sid))
+	w.Header().Add("Content-type", "application/json")
+	// 検索結果を返す
+	fmt.Fprintf(w, res)
+}
+
+/*
+音データをリクエストするページ
+*/
+func RequestSoundData(w http.ResponseWriter, r *http.Request) {
+	logger.LogPrintln(logger.DBG, "[RequestSoundData] start url:", r.URL)
+	// 設定された文字列を取得
+	soundid := r.FormValue("soundid")
+
+	id, err := strconv.ParseInt(soundid, 10, 32)
+
+	filename := ""
+	if err != nil {
+		logger.LogPrintln(logger.ERR, "[RequestSoundData] parse err:", err)
+	} else {
+		// 音データのファイルパスを取得する
+		filename = db.GetSoundFileName(int(id))
+	}
+
+	w.Header().Add("Content-type", "application/force-download")
 	http.ServeFile(w, r, filename)
+}
+
+/*
+音データIDをJSON文字列にして取得する
+*/
+func getSoundIDResJSONStr(soundid int) string {
+	resp := define.SoundIDRes{soundid}
+	jsonstr, _ := json.Marshal(resp)
+	return string(jsonstr)
 }

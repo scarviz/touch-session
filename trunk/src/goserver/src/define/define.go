@@ -16,3 +16,10 @@ type CompSoundData struct {
 	Index   int
 	SoundID int
 }
+
+/*
+音データID返却用
+*/
+type SoundIDRes struct {
+	SoundID int `json:soundid`
+}
