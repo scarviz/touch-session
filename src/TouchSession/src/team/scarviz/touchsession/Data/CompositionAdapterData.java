@@ -15,6 +15,7 @@ import android.media.AudioManager;
 import android.media.SoundPool;
 import android.media.SoundPool.OnLoadCompleteListener;
 import android.os.Handler;
+import android.util.Log;
 import android.widget.Toast;
 
 
@@ -116,7 +117,7 @@ public class CompositionAdapterData extends CompositionDto {
 		try{
 			return JsonUtil.createRhythmJson(this.getCompositionJson());
 		}catch(Exception e){
-
+			Log.d("jsonerr", e.getMessage());
 		}
 		return null;
 	}
