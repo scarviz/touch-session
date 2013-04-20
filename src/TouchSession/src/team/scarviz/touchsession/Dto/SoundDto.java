@@ -76,6 +76,19 @@ public class SoundDto {
 		owner = item.getValueInt(Table.SoundData.OWNER);
 	}
 
+	public static SoundDto select(Context con ,int soundId){
+		SQLBase sql = TableAccess.getInstance(con);
+		List<SQLItem> items = sql.select(sql,
+				Table.SoundData.TABLE,
+				Table.SoundData.COLUMNS,
+				Table.SoundData.SOUND_ID + "=?", new String[]{StringUtility.toString(soundId)}, null, null, null);
+
+		if(items != null && items.size() > 0){
+			return new SoundDto(items.get(0));
+		}
+		return null;
+	}
+
 
 	public static List<SoundDto> getAllData(Context con){
 
@@ -116,6 +129,28 @@ public class SoundDto {
 		else
 			return false;
 	}
+
+	public boolean update(Context con){
+		SQLBase sql = TableAccess.getInstance(con);
+		ContentValues val = new ContentValues();
+		val.put(Table.SoundData.OWNER, owner);
+		val.put(Table.SoundData.SOUND_FILE_PATH, soundFilePath);
+		val.put(Table.SoundData.SOUND_ID, soundId);
+		sql.addArgs(val);
+		if(0 <= sql.update(sql, Table.SoundData.TABLE,Table.SoundData.ID + "=" + this.soundId))
+			return true;
+		else
+			return false;
+	}
+
+
+	public static boolean isExsits(Context con , int soundId){
+		SoundDto dto = select(con,soundId);
+		if(dto != null) return true;
+		else
+			return false;
+	}
+
 
 	public static  SoundDto getSoundData(Context con , int soundId){
 		SQLBase sql = TableAccess.getInstance(con);
