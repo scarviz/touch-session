@@ -8,10 +8,24 @@ http://gosrv.scarviz.net:59702/touchsession/nfcsound?nfcdata=0
 http://gosrv.scarviz.net:59702/touchsession/reqsounddata?soundid=0
 
 # 構成データを送る
-(未定)
+http://gosrv.scarviz.net:59702/touchsession/regcompdata
 
 # 構成データとしてサーバに送るJSON文字列
 {"title":"test comp", "rhythm":100.0, "composition":[12, 12, -1, 12, -1, 13, 13, -1, -1, -1, -1, 12, 12, 12, 12, 12]}
 
+# 構成データ登録IDのJSON
+{"compid":0}
 
+# 構成データリストと音データIDリストを取得する
+http://gosrv.scarviz.net:59702/touchsession/reqcomplist
 
+# 取得時のJSON文字列
+{
+	"compdatalist":[
+		"compid":0,
+		"title":"test title",
+		"rhythm":100.0,
+		"composition":[12, 12, -1, 12, -1, 13, 13, -1, -1, -1, -1, 12, 12, 12, 12, 12]
+	],
+	"soundidlist":[1,2,3,4,5,6,7,8,･･･,100,101,･･･]
+}
