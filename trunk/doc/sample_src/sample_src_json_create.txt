@@ -1,0 +1,50 @@
+    /**
+     * 休憩ボタン押下時の処理
+     */
+    private void ExecBreakMes(){
+		// ニックネーム
+		String name = m_sp.getString(getString(R.string.pref_key_myname), "");
+		// 休憩メッセージ
+		String mes = getString(R.string.gcmmes_breakmes);
+		
+		// グループ名
+		String groupName = m_sp.getString(getString(R.string.pref_key_group), "");
+		// グループ情報
+		final GroupInfo gminfo = TouringNaviSQL.GetGroupInfo(ContactActivity.this, groupName);
+
+		// グループ情報がない、またはメンバが一人もいない場合
+		if (gminfo == null || gminfo.Members == null || gminfo.Members.size() <= 0) {
+			return;
+		}
+		
+    	//　休憩ボタン押下時にGCMにメッセージを送る
+		//String registrationid = m_sp.getString(getString(R.string.pref_key_registrationid), "");
+    	JSONObject obj = new JSONObject();
+		try {
+			obj.put(Define.KEY_COLLAPSE, Define.COLLAPSE_MESSAGE);
+			obj.put(Define.KEY_TIME_TO_LIVE, Define.TIME_TO_LIVE);
+			JSONObject data = new JSONObject();
+			data.put(Define.KEY_FUNCTION, Define.FUNCTION_CONTACT);
+			data.put(Define.KEY_SPEAKER, name);
+			data.put(Define.KEY_SPEAK, mes);
+			obj.put("data", data);
+			JSONArray ids = new JSONArray();
+			for(int i = 0; i < gminfo.Members.size(); i++){
+				ids.put(gminfo.Members.get(i).VendorID);
+			}
+			obj.put(Define.KEY_REG_IDS, ids);
+
+	    	Log.d("ContactActivity.ExecBreakMes", "JSONObject: " + obj.toString());
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+    	
+    	try {
+    		JSONObject resJson = WebServiceUtils.PostJSONwithApiKey("https://android.googleapis.com/gcm/send", obj, Define.API_KEY);
+			UpdateMemberInfo(resJson, gminfo.Members);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }

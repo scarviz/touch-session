@@ -11,7 +11,7 @@ http://gosrv.scarviz.net:59702/touchsession/reqsounddata?soundid=0
 (未定)
 
 # 構成データとしてサーバに送るJSON文字列
-{"title":"test comp", "rhythm":0.5, "composition":["12","12","","12","","13","13","","","","","12","12","12","12","12"]}
+{"title":"test comp", "rhythm":100.0, "composition":[12, 12, -1, 12, -1, 13, 13, -1, -1, -1, -1, 12, 12, 12, 12, 12]}
 
 
 
