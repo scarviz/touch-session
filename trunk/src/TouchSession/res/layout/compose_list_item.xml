@@ -4,13 +4,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
+    android:background="@drawable/list_bg"
     android:orientation="horizontal" >
 
 
     <CheckBox
+        style="@style/NewCheckBox"
         android:textSize="20sp"
         android:id="@+id/ComposeListItemCheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="#FFFFFFFF"
         android:gravity="center_vertical" />
 </LinearLayout>

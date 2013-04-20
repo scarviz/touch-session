@@ -1,5 +1,9 @@
 <resources>
 
+    <style name="NewCheckBox" parent="android:Widget.CompoundButton.CheckBox">
+		<item name="android:button">@drawable/check_session_style</item>
+	</style>
+
     <style name="AppBackGround">
 	    <item name="android:background">#FFFFFFF8</item>
     </style>
