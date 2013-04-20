@@ -59,6 +59,10 @@ func main() {
 	http.HandleFunc("/touchsession/nfcsound", page.NFCSound)
 	// reqsounddataページ
 	http.HandleFunc("/touchsession/reqsounddata", page.RequestSoundData)
+	// regcompdataページ
+	http.HandleFunc("/touchsession/regcompdata", page.RegistCompositionData)
+	// reqcomplistページ
+	http.HandleFunc("/touchsession/reqcomplist", page.RequestCompDataList)
 	http.Handle("/sounddata/", http.StripPrefix("/sounddata/", http.FileServer(http.Dir("sounddata"))))
 
 	// Webサーバを開始する

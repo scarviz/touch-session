@@ -6,6 +6,7 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"logger"
 	"math"
 	"net/http"
@@ -33,6 +34,13 @@ func NFCSound(w http.ResponseWriter, r *http.Request) {
 	errdir := os.MkdirAll("sounddata", 0755)
 	if errdir != nil {
 		logger.LogPrintln(logger.ERR, "[NFCSound] make dir err:", errdir)
+
+		// IDをJSON形式にする
+		res := getSoundIDResJSONStr(int(-1))
+		w.Header().Add("Content-type", "application/json")
+		// 結果を返す
+		fmt.Fprintf(w, res)
+
 		return
 	}
 
@@ -58,7 +66,7 @@ func NFCSound(w http.ResponseWriter, r *http.Request) {
 		// IDをJSON形式にする
 		res := getSoundIDResJSONStr(int(soundid))
 		w.Header().Add("Content-type", "application/json")
-		// 検索結果を返す
+		// 結果を返す
 		fmt.Fprintf(w, res)
 
 		return
@@ -86,7 +94,7 @@ func NFCSound(w http.ResponseWriter, r *http.Request) {
 	// IDをJSON形式にする
 	res := getSoundIDResJSONStr(int(sid))
 	w.Header().Add("Content-type", "application/json")
-	// 検索結果を返す
+	// 結果を返す
 	fmt.Fprintf(w, res)
 }
 
@@ -113,10 +121,97 @@ func RequestSoundData(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
+構成データ登録ページ
+*/
+func RegistCompositionData(w http.ResponseWriter, r *http.Request) {
+	logger.LogPrintln(logger.DBG, "[RegistCompositionData] start url:", r.URL)
+	// レスポンス内容を取得
+	data, errread := ioutil.ReadAll(r.Body)
+	if errread != nil {
+		logger.LogPrintln(logger.ERR, "[RegistCompositionData] read body err:", errread)
+
+		// IDをJSON形式にする
+		res := getCompIDResJSONStr(int(-1))
+		w.Header().Add("Content-type", "application/json")
+		// 結果を返す
+		fmt.Fprintf(w, res)
+		return
+	}
+
+	// リクエストJSON
+	var reqcompdata define.ReqRegCompData
+	jsonerr := json.Unmarshal(data, &reqcompdata)
+	if jsonerr != nil {
+		logger.LogPrintln(logger.ERR, "[RegistCompositionData] json err:", jsonerr)
+
+		// IDをJSON形式にする
+		res := getCompIDResJSONStr(int(-1))
+		w.Header().Add("Content-type", "application/json")
+		// 結果を返す
+		fmt.Fprintf(w, res)
+		return
+	}
+
+	sounddata := make([]define.CompSoundData, 0, 16)
+	// リクエストされた構成データを格納しなおす
+	compdata := define.CompositionData{
+		Rhythm:    reqcompdata.Rhythm,
+		Title:     reqcompdata.Title,
+		SoundData: sounddata}
+
+	for index, sound := range reqcompdata.Composition {
+		sounddata = append(sounddata, define.CompSoundData{
+			Index:   index,
+			SoundID: sound})
+	}
+
+	// DBに登録する
+	compId := db.InsertCompDataTb(compdata)
+
+	// IDをJSON形式にする
+	res := getCompIDResJSONStr(int(compId))
+	w.Header().Add("Content-type", "application/json")
+	// 結果を返す
+	fmt.Fprintf(w, res)
+}
+
+/*
+構成データリストを取得するページ
+*/
+func RequestCompDataList(w http.ResponseWriter, r *http.Request) {
+	logger.LogPrintln(logger.DBG, "[RequestCompDataList] start url:", r.URL)
+
+	complist, soundidlist := db.GetCompDataList()
+	// 構成データ一覧をJSON形式にする
+	res := getCompListResJSONStr(complist, soundidlist)
+	w.Header().Add("Content-type", "application/json")
+	// 結果を返す
+	fmt.Fprintf(w, res)
+}
+
+/*
 音データIDをJSON文字列にして取得する
 */
 func getSoundIDResJSONStr(soundid int) string {
 	resp := define.SoundIDRes{soundid}
+	jsonstr, _ := json.Marshal(resp)
+	return string(jsonstr)
+}
+
+/*
+構成データIDをJSON文字列にして取得する
+*/
+func getCompIDResJSONStr(compid int) string {
+	resp := define.CompIDRes{compid}
+	jsonstr, _ := json.Marshal(resp)
+	return string(jsonstr)
+}
+
+/*
+構成データ一覧をJSON文字列にして取得する
+*/
+func getCompListResJSONStr(complist []define.CompDataList, soundidlist []int) string {
+	resp := define.RespCompList{CompDataList: &complist, SoundIDList: soundidlist}
 	jsonstr, _ := json.Marshal(resp)
 	return string(jsonstr)
 }

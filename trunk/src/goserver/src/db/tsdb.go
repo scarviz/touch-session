@@ -108,9 +108,9 @@ func InsertSoundTb(filepath string) (insId uint64) {
 }
 
 /*
-INSERT文を実行する(nw_notifyinfo_tb)
+INSERT文を実行する(COMPOSITION_DATA_TB)
 */
-func InsertNWNotifyInfoTb(compdata define.CompositionData) {
+func InsertCompDataTb(compdata define.CompositionData) (compId uint64) {
 	// ロック開始
 	lockDB.Lock()
 
@@ -137,15 +137,16 @@ func InsertNWNotifyInfoTb(compdata define.CompositionData) {
 		// ロック終了
 		lockDB.Unlock()
 
+		compId = uint64(0)
 		return
 	}
 
 	// Insertしたときの自動採番のPRIMARY KEY(id)を取得する
-	insId := res.InsertId()
+	compId = res.InsertId()
 
 	for _, sdata := range compdata.SoundData {
 		// Query実行
-		_, _, issounderr := checkedResult(tr.Query(cmpsqlstr, insId, sdata.Index, sdata.SoundID))
+		_, _, issounderr := checkedResult(tr.Query(cmpsqlstr, compId, sdata.Index, sdata.SoundID))
 
 		if issounderr {
 			fmt.Println("COMPOSITION_DATA_TBへのinsertに失敗しました")
@@ -157,12 +158,15 @@ func InsertNWNotifyInfoTb(compdata define.CompositionData) {
 			// ロック終了
 			lockDB.Unlock()
 
+			compId = uint64(0)
 			return
 		}
 	}
 
 	// ロック終了
 	lockDB.Unlock()
+
+	return
 }
 
 /*
@@ -240,4 +244,94 @@ func GetSoundIDByFileName(filename string) (soundid int) {
 	lockDB.Unlock()
 
 	return
+}
+
+/*
+構成データリストを取得する
+*/
+func GetCompDataList() ([]define.CompDataList, []int) {
+	// ロック開始
+	lockDB.Lock()
+
+	logger.LogPrintln(logger.DBG, "[GetCompDataList] start")
+
+	// 音データIDリスト
+	soundidlist := make([]int, 0)
+
+	// SELECT文作成
+	sqlstr := "SELECT ID id, RHYTHM rhythm, TITLE title FROM COMPOSITION_MASTER"
+
+	// Query実行
+	rows, res, iserr := checkedResult(DBConn.Query(sqlstr))
+
+	size := 0
+	if iserr {
+		fmt.Println("[GetCompDataList] 構成データリスト取得に失敗しました")
+		logger.LogPrintln(logger.ERR, "[GetCompDataList] 構成データリスト取得に失敗しました")
+
+		compdummy := make([]define.CompDataList, 0)
+		return compdummy, soundidlist
+	} else {
+		size = len(rows)
+		logger.LogPrintln(logger.DBG, "[GetCompDataList] 取得件数：", size)
+	}
+
+	// カラムのマッピング
+	id := res.Map("id")
+	rhythm := res.Map("rhythm")
+	title := res.Map("title")
+
+	sounddata := make([]int, 16)
+	complist := make([]define.CompDataList, 0, size)
+	for _, row := range rows {
+		complist = append(complist,
+			define.CompDataList{
+				CompID:      row.Int(id),
+				Rhythm:      row.Float(rhythm),
+				Title:       row.Str(title),
+				Composition: sounddata})
+	}
+
+	sqlsoundstr := "SELECT cmptb.COMP_INDEX compindex, cmptb.SOUND_ID soundid FROM COMPOSITION_MASTER cmpms INNER JOIN COMPOSITION_DATA_TB cmptb ON cmpms.ID = cmptb.COMP_MS_ID WHERE cmpms.ID = %d"
+
+	for cnt, compval := range complist {
+		// Query実行
+		rowssound, ressound, iserrsound := checkedResult(DBConn.Query(sqlsoundstr, compval.CompID))
+
+		sizesound := 0
+		if iserrsound {
+			fmt.Println("[GetCompDataList] 構成データリストの音データ取得に失敗しました", compval.CompID)
+			logger.LogPrintln(logger.ERR, "[GetCompDataList] 構成データリストの音データ取得に失敗しました", compval.CompID)
+
+			continue
+		} else {
+			sizesound = len(rowssound)
+			logger.LogPrintln(logger.DBG, "[GetCompDataList] 取得件数：", sizesound)
+		}
+
+		// カラムのマッピング
+		index := ressound.Map("compindex")
+		soundid := ressound.Map("soundid")
+
+		i := 0
+		sid := 0
+		ok := false
+		tmpmap := make(map[int]int)
+		for _, rsound := range rowssound {
+			i = rsound.Int(index)
+			sid = rsound.Int(soundid)
+			complist[cnt].Composition[i] = sid
+
+			_, ok = tmpmap[sid]
+			if !ok {
+				soundidlist = append(soundidlist, sid)
+				tmpmap[sid] = sid
+			}
+		}
+	}
+
+	// ロック終了
+	lockDB.Unlock()
+
+	return complist, soundidlist
 }
