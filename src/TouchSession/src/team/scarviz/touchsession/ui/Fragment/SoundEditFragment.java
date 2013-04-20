@@ -31,10 +31,10 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class SoundEditFragment extends Fragment {
@@ -132,8 +132,8 @@ public class SoundEditFragment extends Fragment {
 	}
 
 	private void setSoundView(View v){
-		((Button)v.findViewById(R.id.SoundEditViewbtnSoundItem)).setText("Sound" + mSoundData.getId());
-		((Button)v.findViewById(R.id.SoundEditViewbtnSoundItem)).setBackgroundColor(mSoundData.getSoundColor());
+		((TextView)v.findViewById(R.id.SoundEditViewTextName)).setText("Sound" + mSoundData.getId());
+		((TextView)v.findViewById(R.id.SoundEditViewTextName)).setTextColor(mSoundData.getSoundColor());
 	}
 
     public static SoundEditFragment newInstance(SoundDto sDto) {
@@ -162,7 +162,7 @@ public class SoundEditFragment extends Fragment {
 	private void initView(View v){
 
 		//サウンド初期セット
-		if(StringUtility.isNullOrEmpty(((Button)v.findViewById(R.id.SoundEditViewbtnSoundItem)).getText())){
+		if(StringUtility.isNullOrEmpty(((TextView)v.findViewById(R.id.SoundEditViewTextName)).getText())){
 			setSoundView(v);
 		}
 

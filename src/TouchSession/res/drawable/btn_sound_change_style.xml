@@ -2,14 +2,14 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_focused="true"
     	  android:state_pressed="false"
-    	  android:drawable="@drawable/btn_n2" />
+    	  android:drawable="@drawable/btn_edit_chgsound_n" />
     <item android:state_focused="true"
     	  android:state_pressed="true"
-    	  android:drawable="@drawable/btn_p" />
+    	  android:drawable="@drawable/btn_edit_chgsound_p" />
     <item android:state_focused="false"
     	  android:state_pressed="true"
-	  android:drawable="@drawable/btn_p" />
+	  android:drawable="@drawable/btn_edit_chgsound_p" />
     <item android:state_enabled="false"
-	  android:drawable="@drawable/btn_n2" />
-    <item android:drawable="@drawable/btn_n2" />
+	  android:drawable="@drawable/btn_edit_chgsound_n" />
+    <item android:drawable="@drawable/btn_edit_chgsound_n" />
 </selector>
