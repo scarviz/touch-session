@@ -14,20 +14,13 @@ public class JsonUtil {
 	public static String createJsonRhythm(List<SoundRhythmData> sounds) throws JSONException{
 		JSONArray jsonArray = new JSONArray();
 
-		JSONObject kv = new JSONObject();
-		String value = "[";
+		JSONObject jsonobj = new JSONObject();
 
 		for(SoundRhythmData sound : sounds){
-			if(sound.getSoundId() >= 0)
-				jsonArray.put(sound.getSoundId());
-			else
-				value += ",";
+			jsonArray.put(sound.getSoundId());
 		}
-		value = value.substring(0, value.length() - 1);
-		value +="]";
-		kv.put("composition", value);
-		jsonArray.put(kv);
-		return jsonArray.toString();
+		jsonobj.put("composition", jsonArray);
+		return jsonobj.toString();
 	}
 
 	public static List<SoundRhythmData> createRhythmJson(String jsonString) throws JSONException{
@@ -36,10 +29,9 @@ public class JsonUtil {
 		JSONArray kv = jsonobject.getJSONArray("composition");
 
 		for(int i = 0;i<kv.length();i++){
-			JSONObject json = kv.getJSONObject(i);
 			SoundRhythmData rhythm = new SoundRhythmData();
-			rhythm.setSoundId(NumberUtility.toInt(json.toString(), -1));
-			json.toString();
+			rhythm.setSoundId(kv.getInt(i));
+			rhythms.add(rhythm);
 		}
 		return rhythms;
 	}
