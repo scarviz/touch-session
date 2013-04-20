@@ -2,8 +2,16 @@
 http://gosrv.scarviz.net:59702/touchsession/nfcsound?nfcdata=0
 
 # nfcdataからのJSON
-{soundid:0}
+{"soundid":0}
 
 # 音データを取得する。soundid=0の数字部分を音データIDに置き換える
 http://gosrv.scarviz.net:59702/touchsession/reqsounddata?soundid=0
+
+# 構成データを送る
+(未定)
+
+# 構成データとしてサーバに送るJSON文字列
+{"title":"test comp", "rhythm":0.5, "composition":["12","12","","12","","13","13","","","","","12","12","12","12","12"]}
+
+
 
