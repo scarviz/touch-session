@@ -1,0 +1,9 @@
+# 音データIDを取得する。nfcdata=0の数字部分を金額に置き換える
+http://gosrv.scarviz.net:59702/touchsession/nfcsound?nfcdata=0
+
+# nfcdataからのJSON
+{soundid:0}
+
+# 音データを取得する。soundid=0の数字部分を音データIDに置き換える
+http://gosrv.scarviz.net:59702/touchsession/reqsounddata?soundid=0
+
