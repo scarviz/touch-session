@@ -79,18 +79,13 @@
 		</LinearLayout>
        </LinearLayout>
 
-        <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="100dp" >
-        </LinearLayout>
-
         <GridView
             android:id="@+id/SoundEditViewGridView"
             android:layout_height="0dp"
             android:layout_width="match_parent"
             android:layout_weight="1"
             android:numColumns="8"
+            android:layout_marginTop="10dip"
             android:layout_gravity="center"
              />
 
