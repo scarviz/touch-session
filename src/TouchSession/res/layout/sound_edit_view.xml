@@ -48,12 +48,12 @@
                 android:layout_weight="2"
                 android:orientation="vertical"
                 >
+
                             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="horizontal"
-                >
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal" >
+
 	          <ImageView
 	              android:layout_width="wrap_content"
 	              android:layout_height="wrap_content"
@@ -69,13 +69,28 @@
 	                android:ems="10" />
 	                     </LinearLayout>
 
+                            <ImageView
+                                android:id="@+id/imageView1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingLeft="18dip"
+                                android:paddingRight="18dip"
+                                android:layout_marginTop="18dip"
+                                android:layout_marginBottom="5dip"
+                                android:src="@drawable/seek_label" />
+
                                  <SeekBar
-            android:layout_gravity="center_vertical"
-                android:id="@+id/SoundEditViewTimeSeekBar"
-                android:layout_width="match_parent"
-                android:max="2000"
-                android:progress="1000"
-                android:layout_height="wrap_content"/>
+                                     android:id="@+id/SoundEditViewTimeSeekBar"
+                                     android:layout_width="match_parent"
+                                     android:layout_height="wrap_content"
+                                     android:layout_gravity="center_vertical"
+                                     android:max="2000"
+                                     android:progress="1000"
+                                     android:progressDrawable="@drawable/seekbar"
+                                     android:maxHeight="20dip"
+                                     android:minHeight="20dip"
+                                     android:thumb="@drawable/seekbar_thumb" />
+
 		</LinearLayout>
        </LinearLayout>
 
