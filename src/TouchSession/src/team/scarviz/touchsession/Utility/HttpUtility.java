@@ -14,11 +14,11 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
@@ -42,7 +42,7 @@ public class HttpUtility {
 			SoundDto sDto = null;
 			try {
 				List<NameValuePair> params = new ArrayList<NameValuePair>();
-					String result = post(httpclient,"http://gosrv.scarviz.net:59702/touchsession/nfcsound?nfcdata=" + zandaka,params,false);
+					String result = post(httpclient,"http://gosrv.scarviz.net:59702/touchsession/nfcsound?nfcdata=" + zandaka,null,false);
 					JSONObject json = new JSONObject(result);
 					String soundId = json.getString("soundid");
 
@@ -79,9 +79,7 @@ public class HttpUtility {
 	public static CompositionDto uploadCompositionData(Context con , CompositionDto comp){
 			HttpClient httpclient = new DefaultHttpClient();
 			try {
-					List<NameValuePair> params = new ArrayList<NameValuePair>();
-					params.add(new BasicNameValuePair("json", JsonUtil.createJsonCompose(comp)));
-					String result = post(httpclient,"http://gosrv.scarviz.net:59702/touchsession/regcompdata",params,false);
+					String result = post(httpclient,"http://gosrv.scarviz.net:59702/touchsession/regcompdata",JsonUtil.createJsonCompose(comp),false);
 					JSONObject json = new JSONObject(result);
 					String compId = json.getString("compid");
 					comp.setComp_ms_id(NumberUtility.toInt(compId));
@@ -146,9 +144,14 @@ public class HttpUtility {
 		 * @return
 		 * @throws Exception
 		 */
-		private static String post(HttpClient httpclient, String url, List<NameValuePair> params, boolean out) throws Exception {
+		private static String post(HttpClient httpclient, String url, String body, boolean out) throws Exception {
 			HttpPost post = new HttpPost(url);
-		    post.setEntity(new UrlEncodedFormEntity(params));
+			if(body!= null){
+				StringEntity entity = new StringEntity(body, HTTP.UTF_8);
+				entity.setContentType("application/json");
+				post.setEntity(entity);
+			}
+
 		    HttpResponse response  = httpclient.execute(post);
 		    String result = EntityUtils.toString(response.getEntity());
 		    post.abort();
