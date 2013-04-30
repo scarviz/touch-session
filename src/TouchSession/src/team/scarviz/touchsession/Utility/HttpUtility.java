@@ -18,6 +18,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
@@ -45,8 +46,7 @@ public class HttpUtility {
 					JSONObject json = new JSONObject(result);
 					String soundId = json.getString("soundid");
 
-					File f = Environment.getExternalStorageDirectory();
-					String path = f.getAbsolutePath() + "/touchsession/" + soundId;
+					String path = getSoundSavePath(soundId);
 					if(download(con, "http://gosrv.scarviz.net:59702/touchsession/reqsounddata?soundid=" + soundId,path ));
 					if(!SoundDto.isExsits(con, NumberUtility.toInt(soundId))){
 						sDto = new SoundDto();
@@ -63,6 +63,13 @@ public class HttpUtility {
 			return sDto;
 	}
 
+
+	private static String getSoundSavePath(String soundId){
+		File f = Environment.getExternalStorageDirectory();
+		String path = f.getAbsolutePath() + "/touchsession/" + soundId;
+		return path;
+	}
+
 	/**
 	 * Composition Data Upload & Download
 	 * @param con
@@ -71,19 +78,62 @@ public class HttpUtility {
 	 */
 	public static CompositionDto uploadCompositionData(Context con , CompositionDto comp){
 			HttpClient httpclient = new DefaultHttpClient();
-			CompositionDto cDto = null;
 			try {
-//					List<NameValuePair> params = new ArrayList<NameValuePair>();
-//					params.add(new BasicNameValuePair("zandaka", StringUtility.toString(zandaka)));
-//					String result = post(httpclient,"url",params,false);
-//				String json = get(httpclient,"url?key=" + result,false);
-				cDto = new CompositionDto();
+					List<NameValuePair> params = new ArrayList<NameValuePair>();
+					params.add(new BasicNameValuePair("json", JsonUtil.createJsonCompose(comp)));
+					String result = post(httpclient,"http://gosrv.scarviz.net:59702/touchsession/regcompdata",params,false);
+					JSONObject json = new JSONObject(result);
+					String compId = json.getString("compid");
+					comp.setComp_ms_id(NumberUtility.toInt(compId));
+					return comp;
 			} catch (Exception e) {
 			} finally {
 				httpclient.getConnectionManager().shutdown();
 			}
 
-			return cDto;
+			return null;
+	}
+
+	/**
+	 * Composition Data Upload & Download
+	 * @param con
+	 * @param zandaka
+	 * @return
+	 */
+	public static List<CompositionDto> getCompositionData(Context con ){
+			HttpClient httpclient = new DefaultHttpClient();
+			try {
+				String result = get(httpclient,"http://gosrv.scarviz.net:59702/touchsession/reqcomplist",false);
+
+
+				//サウンドデータのダウンロードとデータベースへの挿入処理
+				List<Integer> sounds = JsonUtil.createSoundIdsJson(result);
+				for(int soundId : sounds){
+					String path = getSoundSavePath(StringUtility.toString(soundId));
+					if(download(con, "http://gosrv.scarviz.net:59702/touchsession/reqsounddata?soundid=" + soundId,path ));
+					if(!SoundDto.isExsits(con, NumberUtility.toInt(soundId))){
+						SoundDto sDto = new SoundDto();
+						sDto.setSoundId(NumberUtility.toInt(soundId));
+						sDto.setSoundFilePath(path);
+						sDto.setOwner(0);
+					}
+				}
+
+				//取得した拍子データをInsert
+				List<CompositionDto> comps = JsonUtil.createComposeJson(con, result);
+				for(CompositionDto comp : comps){
+					if(!CompositionDto.isExsits(con, comp.getComp_ms_id())){
+						comp.insert(con);
+					}
+				}
+
+				return CompositionDto.getAllData(con);
+			} catch (Exception e) {
+			} finally {
+				httpclient.getConnectionManager().shutdown();
+			}
+
+			return null;
 	}
 
 

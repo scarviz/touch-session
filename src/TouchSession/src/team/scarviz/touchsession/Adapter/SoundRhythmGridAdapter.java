@@ -6,6 +6,7 @@ import team.scarviz.touchsession.R;
 import team.scarviz.touchsession.Data.SoundRhythmData;
 import team.scarviz.touchsession.Dto.SoundDto;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -25,10 +26,10 @@ public class SoundRhythmGridAdapter extends ArrayAdapter<SoundRhythmData> {
 	}
 
 	/**
-	 * �R���X�g���N�^
-	 * @param context			�R���e�L�X�g
-	 * @param rowLayoutResourceId	���\�[�XID
-	 * @param items					�A�C�e��
+	 * コンストラクタ
+	 * @param context				コンテキスト
+	 * @param rowLayoutResourceId	リソースID
+	 * @param items					アイテム
 	 */
 	public SoundRhythmGridAdapter(Context context,List<SoundRhythmData> items,SoundDto sDto) {
 		super(context, 0, items);
@@ -42,7 +43,7 @@ public class SoundRhythmGridAdapter extends ArrayAdapter<SoundRhythmData> {
 	}
 
 	/**
-	 * �r���[�̕\���A�r���[�̎擾�����߂��邽�ьĂяo�����
+	 * View表示時に呼ばれる
 	 */
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
@@ -57,7 +58,8 @@ public class SoundRhythmGridAdapter extends ArrayAdapter<SoundRhythmData> {
    		}
 		if(mItems.get(position).getSoundId() >= 0)
 			((ViewHolder)view.getTag()).ImageRhytmView.setBackgroundColor(mItems.get(position).getFilterColor());
-
+		else
+			((ViewHolder)view.getTag()).ImageRhytmView.setBackgroundColor(Color.BLACK);
 		((ViewHolder)view.getTag()).ImageRhytmView.setOnClickListener(new OnClickListener() {
 
 			@Override

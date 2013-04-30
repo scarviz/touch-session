@@ -24,10 +24,10 @@ public class SoundListAdapter extends ArrayAdapter<SoundDto> {
 	}
 
 	/**
-	 * ƒRƒ“ƒXƒgƒ‰ƒNƒ^
-	 * @param context			ƒRƒ“ƒeƒLƒXƒg
-	 * @param rowLayoutResourceId	ƒŠƒ\[ƒXID
-	 * @param items					ƒAƒCƒeƒ€
+	 * ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+	 * @param context				ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆ
+	 * @param rowLayoutResourceId	ãƒªã‚½ãƒ¼ã‚¹ID
+	 * @param items					ã‚¢ã‚¤ãƒ†ãƒ 
 	 */
 	public SoundListAdapter(Context context,List<SoundDto> items) {
 		super(context, 0, items);
@@ -37,7 +37,7 @@ public class SoundListAdapter extends ArrayAdapter<SoundDto> {
 
 
 	/**
-	 * ƒrƒ…[‚Ì•\¦Aƒrƒ…[‚Ìæ“¾‚ª‹‚ß‚ç‚ê‚é‚½‚ÑŒÄ‚Ño‚³‚ê‚é
+	 * Viewè¡¨ç¤ºæ™‚ã«å‘¼ã°ã‚Œã‚‹
 	 */
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
@@ -53,6 +53,8 @@ public class SoundListAdapter extends ArrayAdapter<SoundDto> {
    		}
 		((ViewHolder)view.getTag()).TextSoundName.setText("Sound" + mItems.get(position).getId());
 		((ViewHolder)view.getTag()).ImageBarColor.setColorFilter(mItems.get(position).getSoundColor(),android.graphics.PorterDuff.Mode.SRC_ATOP);
+		
+		
 		return view;
 	}
 }

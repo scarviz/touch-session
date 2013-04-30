@@ -8,6 +8,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import team.scarviz.touchsession.Data.SoundRhythmData;
+import team.scarviz.touchsession.Dto.CompositionDto;
+import android.content.Context;
 
 public class JsonUtil {
 
@@ -34,5 +36,56 @@ public class JsonUtil {
 			rhythms.add(rhythm);
 		}
 		return rhythms;
+	}
+
+
+	public static String createJsonCompose(CompositionDto dto) throws JSONException{
+		JSONObject jsonobj = new JSONObject();
+
+
+		List<SoundRhythmData> rhythms = createRhythmJson(dto.getCompositionJson());
+
+		jsonobj.put("title", dto.getTitle());
+		jsonobj.put("rhythm",dto.getRhythm());
+
+
+		JSONArray jsonArray = new JSONArray();
+		for(SoundRhythmData sound : rhythms){
+			jsonArray.put(sound.getSoundId());
+		}
+		jsonobj.put("composition", jsonArray);
+
+		return jsonobj.toString();
+
+	}
+
+	public static List<CompositionDto> createComposeJson(Context con,String jsonString) throws JSONException{
+		List<CompositionDto> retList = new ArrayList<CompositionDto>();
+
+		JSONObject jsonobject = new JSONObject(jsonString);
+		JSONArray kv = jsonobject.getJSONArray("compdatalist");
+
+		for(int i = 0;i<kv.length();i++){
+			CompositionDto dto = new CompositionDto();
+			dto.setComp_ms_id(kv.getJSONObject(i).getInt("compid"));
+			dto.setTitle(kv.getJSONObject(i).getString("title"));
+			dto.setRhythm(kv.getJSONObject(i).getDouble("rhythm"));
+			dto.setEditing(0);
+			dto.setCompositionJson(kv.getJSONObject(i).getString("cocmposition"));
+			retList.add(dto);
+		}
+
+		return retList;
+	}
+
+	public static List<Integer> createSoundIdsJson(String jsonString) throws JSONException{
+		List<Integer> retList = new ArrayList<Integer>();
+		JSONObject jsonobject = new JSONObject(jsonString);
+		JSONArray kv = jsonobject.getJSONArray("soundidlist");
+
+		for(int i = 0;i<kv.length();i++){
+			retList.add(kv.getInt(i));
+		}
+		return retList;
 	}
 }

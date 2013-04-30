@@ -7,6 +7,7 @@ import team.scarviz.touchsession.Database.SQLBase;
 import team.scarviz.touchsession.Database.SQLItem;
 import team.scarviz.touchsession.Database.Table;
 import team.scarviz.touchsession.Database.TableAccess;
+import team.scarviz.touchsession.Utility.StringUtility;
 import android.content.ContentValues;
 import android.content.Context;
 
@@ -65,9 +66,41 @@ public class CompositionDto {
 	}
 
 	/**
-	 * 
+	 *
+	 * @param con
+	 * @param compId
+	 * @return
+	 */
+	public static CompositionDto select(Context con ,int compId){
+		SQLBase sql = TableAccess.getInstance(con);
+		List<SQLItem> items = sql.select(sql,
+				Table.CompositionData.TABLE,
+				Table.CompositionData.COLUMNS,
+				Table.CompositionData.COMP_MS_ID + "=?", new String[]{StringUtility.toString(compId)}, null, null, null);
+
+		if(items != null && items.size() > 0){
+			return new CompositionDto(items.get(0));
+		}
+		return null;
+	}
+
+	/**
+	 *
 	 */
 	public CompositionDto() {
+	}
+
+	/**
+	 *
+	 * @param con
+	 * @param compId
+	 * @return
+	 */
+	public static boolean isExsits(Context con , int compId){
+		CompositionDto dto = select(con,compId);
+		if(dto != null) return true;
+		else
+			return false;
 	}
 
 	/**
