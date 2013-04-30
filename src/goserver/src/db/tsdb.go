@@ -86,6 +86,8 @@ func InsertSoundTb(filepath string) (insId uint64) {
 	// ロック開始
 	lockDB.Lock()
 
+	logger.LogPrintln(logger.DBG, "[InsertSoundTb] filepath:", filepath)
+
 	// INSERT文作成
 	sqlstr := "INSERT INTO SOUND_DATA_TB(SOUND_FILE_PATH, CREATE_TIME) VALUES ('%s', '%04d-%02d-%02d %02d:%02d:%02d')"
 
@@ -113,6 +115,8 @@ INSERT文を実行する(COMPOSITION_DATA_TB)
 func InsertCompDataTb(compdata define.CompositionData) (compId uint64) {
 	// ロック開始
 	lockDB.Lock()
+
+	logger.LogPrintln(logger.DBG, "[InsertCompDataTb] start")
 
 	// トランザクション開始
 	tr, err := DBConn.Begin()
@@ -162,6 +166,9 @@ func InsertCompDataTb(compdata define.CompositionData) (compId uint64) {
 			return
 		}
 	}
+
+	tr.Commit()
+	logger.LogPrintln(logger.DBG, "[InsertCompDataTb] Commit")
 
 	// ロック終了
 	lockDB.Unlock()
