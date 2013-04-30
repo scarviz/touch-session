@@ -100,6 +100,10 @@ public class SoundEditFragment extends Fragment {
 						try{
 							compData.setCompositionJson(JsonUtil.createJsonRhythm(mRhythmData));
 							compData.insert(getActivity());
+
+
+
+
 						} catch (JSONException e) {
 							Toast.makeText(getActivity(), "JSONデータの生成に失敗", Toast.LENGTH_SHORT).show();
 							return;
@@ -323,7 +327,8 @@ public class SoundEditFragment extends Fragment {
 				if(ret != null){
 					Toast.makeText(getActivity(), "リズムデータをアップロードしました" ,Toast.LENGTH_SHORT).show();
 					//DB登録
-			//		ret.insert(getActivity());
+					ret.insert(getActivity());
+					Toast.makeText(getActivity(), "MESiD:" + ret.getComp_ms_id(), Toast.LENGTH_SHORT).show();
 					getActivity().finish();
 				}
 				else{

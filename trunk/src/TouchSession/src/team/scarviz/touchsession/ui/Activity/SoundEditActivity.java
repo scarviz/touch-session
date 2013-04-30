@@ -38,7 +38,7 @@ public class SoundEditActivity extends FragmentActivity {
 			mSoundDatas = SoundDto.getAllData(getApplicationContext());
 
 		if(mSoundDatas.size() <= 0){
-			Toast.makeText(getApplicationContext(), "音データが一つもありません", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), "荳縺､繧よ峇繝�繝ｼ繧ｿ縺後≠繧翫∪縺帙ｓ", Toast.LENGTH_SHORT).show();
 			finish();
 			return;
 		}
@@ -66,7 +66,7 @@ public class SoundEditActivity extends FragmentActivity {
 	}
 
 	/**
-	 * サウンドリストアダプターの設定
+	 * 繧｢繝繝励ち
 	 */
 	public void setSoundListAdapter(){
 		ListView lView = (ListView)mNav.findViewById(R.id.SoundListViewList);

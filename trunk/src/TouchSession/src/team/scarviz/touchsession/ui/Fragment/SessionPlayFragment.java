@@ -5,7 +5,11 @@ import java.util.List;
 import team.scarviz.touchsession.R;
 import team.scarviz.touchsession.Adapter.ComposeListAdapter;
 import team.scarviz.touchsession.Data.CompositionAdapterData;
+import team.scarviz.touchsession.Dto.CompositionDto;
 import team.scarviz.touchsession.Listener.AudioPlayStopListener;
+import team.scarviz.touchsession.Utility.HttpUtility;
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -23,9 +27,8 @@ public class SessionPlayFragment extends Fragment {
 
 	ProgressDialogFragment mProgressDialog;
 	boolean isPlay = false;
-	boolean isDialogActive = false;
 	int stopCount = 0;
-
+	boolean isDialogActive = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -39,12 +42,10 @@ public class SessionPlayFragment extends Fragment {
 		View v = inflater.inflate(R.layout.session_play_view, container,false);
 		setHasOptionsMenu(true);
 		if(mCompositionDatas == null){
-			mCompositionDatas= CompositionAdapterData.getAllCompositionData(getActivity());
-			for(CompositionAdapterData data : mCompositionDatas){
-				data.setAudioPlayStopListener(new onAudioPlayStopListener());
-			}
+			new OnListDownload(getActivity()).execute();
+		}else{
+			initView(v);
 		}
-		initView(v);
 
 		return v;
 	}
@@ -145,6 +146,60 @@ public class SessionPlayFragment extends Fragment {
 		super.onPause();
 		for(CompositionAdapterData data : mCompositionDatas){
 			data.stop();
+		}
+	}
+
+	/**
+	 * save
+	 */
+	private class OnListDownload extends AsyncTask<Void,Void,List<CompositionDto>>{
+		Context mContext;
+
+		public OnListDownload(Context con) {
+			mContext = con;
+		}
+
+		@Override
+		protected List<CompositionDto> doInBackground(Void... params) {
+			return HttpUtility.getCompositionData(mContext);
+		}
+
+		/**
+		 *
+		 */
+		@Override
+		protected void onPreExecute() {
+			mProgressDialog = ProgressDialogFragment.newInstance("リズムデータを取得しています");
+			mProgressDialog.setCancelable(false);
+			mProgressDialog.show(getFragmentManager(), "progress");
+			isDialogActive = true;
+		}
+
+		// upload proc
+		@Override
+		protected void onPostExecute(List<CompositionDto> ret)
+		{
+			if(mProgressDialog != null){
+				try{
+					mProgressDialog.dismiss();
+					}catch(Exception e){
+					}
+			}
+
+			if(isAdded()){
+				if(ret != null){
+					mCompositionDatas= CompositionAdapterData.getAllCompositionData(getActivity());
+					for(CompositionAdapterData data : mCompositionDatas){
+						data.setAudioPlayStopListener(new onAudioPlayStopListener());
+					}
+					initView(getView());
+				}
+				else{
+					Toast.makeText(getActivity(), "リズムデータの取得に失敗しました", Toast.LENGTH_SHORT).show();
+					getActivity().finish();
+				}
+			}
+			isDialogActive = false;
 		}
 	}
 }
