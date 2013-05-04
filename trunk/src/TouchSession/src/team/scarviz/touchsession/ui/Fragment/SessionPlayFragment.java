@@ -144,8 +144,10 @@ public class SessionPlayFragment extends Fragment {
 	@Override
 	public void onPause() {
 		super.onPause();
-		for(CompositionAdapterData data : mCompositionDatas){
-			data.stop();
+		if(mCompositionDatas != null){
+			for(CompositionAdapterData data : mCompositionDatas){
+				data.stop();
+			}
 		}
 	}
 
