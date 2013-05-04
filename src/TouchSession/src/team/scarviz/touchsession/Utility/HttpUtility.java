@@ -170,7 +170,7 @@ public class HttpUtility {
 		private static String get(HttpClient httpclient, String url, boolean out) throws Exception {
 			HttpGet get = new HttpGet(url);
 		    HttpResponse response  = httpclient.execute(get);
-		    String result = EntityUtils.toString(response.getEntity());
+		    String result = EntityUtils.toString(response.getEntity(),HTTP.UTF_8);
 		    get.abort();
 		    return result;
 		}
