@@ -99,11 +99,6 @@ public class SoundEditFragment extends Fragment {
 						compData.setRhythm(((SeekBar)getView().findViewById(R.id.SoundEditViewTimeSeekBar)).getProgress());
 						try{
 							compData.setCompositionJson(JsonUtil.createJsonRhythm(mRhythmData));
-							compData.insert(getActivity());
-
-
-
-
 						} catch (JSONException e) {
 							Toast.makeText(getActivity(), "JSONデータの生成に失敗", Toast.LENGTH_SHORT).show();
 							return;

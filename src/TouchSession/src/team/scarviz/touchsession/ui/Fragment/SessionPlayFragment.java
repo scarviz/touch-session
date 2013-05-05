@@ -102,6 +102,7 @@ public class SessionPlayFragment extends Fragment {
 					if(data.isCheck()){
 						data.play(getActivity());
 						isPlay = true;
+						getView().findViewById(R.id.SessionPlayViewbtnPlayStop).setEnabled(false);
 					}
 				}
 
@@ -129,8 +130,12 @@ public class SessionPlayFragment extends Fragment {
 					isNowPlaying = true;
 			}
 
-			if(!isNowPlaying)
+			if(!isNowPlaying){
 				isPlay = false;
+				if(null != getView() && getView().findViewById(R.id.SessionPlayViewbtnPlayStop) != null){
+					getView().findViewById(R.id.SessionPlayViewbtnPlayStop).setEnabled(true);
+				}
+			}
 		}
 	}
 
