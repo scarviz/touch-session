@@ -153,17 +153,17 @@ func RegistCompositionData(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sounddata := make([]define.CompSoundData, 0, 16)
-	// リクエストされた構成データを格納しなおす
-	compdata := define.CompositionData{
-		Rhythm:    reqcompdata.Rhythm,
-		Title:     reqcompdata.Title,
-		SoundData: sounddata}
-
 	for index, sound := range reqcompdata.Composition {
 		sounddata = append(sounddata, define.CompSoundData{
 			Index:   index,
 			SoundID: sound})
 	}
+
+	// リクエストされた構成データを格納しなおす
+	compdata := define.CompositionData{
+		Rhythm:    reqcompdata.Rhythm,
+		Title:     reqcompdata.Title,
+		SoundData: sounddata}
 
 	// DBに登録する
 	compId := db.InsertCompDataTb(compdata)
