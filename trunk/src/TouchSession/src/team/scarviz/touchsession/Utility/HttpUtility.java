@@ -7,12 +7,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -41,7 +39,6 @@ public class HttpUtility {
 			HttpClient httpclient = new DefaultHttpClient();
 			SoundDto sDto = null;
 			try {
-				List<NameValuePair> params = new ArrayList<NameValuePair>();
 					String result = post(httpclient,"http://gosrv.scarviz.net:59702/touchsession/nfcsound?nfcdata=" + zandaka,null,false);
 					JSONObject json = new JSONObject(result);
 					String soundId = json.getString("soundid");
@@ -66,6 +63,8 @@ public class HttpUtility {
 
 	private static String getSoundSavePath(String soundId){
 		File f = Environment.getExternalStorageDirectory();
+		File d = new File(f.getAbsolutePath() + "/touchsession/");
+		if(!d.exists()) d.mkdir();
 		String path = f.getAbsolutePath() + "/touchsession/" + soundId;
 		return path;
 	}

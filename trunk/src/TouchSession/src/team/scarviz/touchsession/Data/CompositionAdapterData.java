@@ -131,8 +131,6 @@ public class CompositionAdapterData extends CompositionDto {
 		@Override
 		public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
 
-			//タイマーの初期化処理
-			mCompletedCount++;
 			int millisec = 1000;
 			int work = (int)getRhythm() - 1000;
 			if(work < 0)
