@@ -200,6 +200,7 @@ public class SoundEditFragment extends Fragment {
 		List<Integer> soundList = SoundRhythmData.getUniqueSoundId(mRhythmData);
 		if(soundList.size() <= 0) {
 			Toast.makeText(getActivity(), "一つも音が配置されていません", Toast.LENGTH_SHORT).show();
+			setPlayEnabled(true);
 			return;
 		}
 		mSePlayer.setOnLoadCompleteListener(new onSoundLoadCompletedListener());
