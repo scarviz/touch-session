@@ -126,7 +126,7 @@ func InsertCompDataTb(compdata define.CompositionData) (compId uint64) {
 	// 構成マスタ
 	mssqlstr := "INSERT INTO COMPOSITION_MASTER(RHYTHM, TITLE) VALUES (%f, '%s')"
 	// 構成データテーブル
-	cmpsqlstr := "INSERT INTO COMPOSITION_DATA_TB(COMP_MS_ID, INDEX, SOUND_ID) VALUES (%d, %d, %d)"
+	cmpsqlstr := "INSERT INTO COMPOSITION_DATA_TB(COMP_MS_ID, COMP_INDEX, SOUND_ID) VALUES (%d, %d, %d)"
 
 	// Query実行
 	_, res, iserr := checkedResult(tr.Query(mssqlstr, compdata.Rhythm, compdata.Title))
