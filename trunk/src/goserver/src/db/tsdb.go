@@ -288,9 +288,9 @@ func GetCompDataList() ([]define.CompDataList, []int) {
 	rhythm := res.Map("rhythm")
 	title := res.Map("title")
 
-	sounddata := make([]int, 16)
 	complist := make([]define.CompDataList, 0, size)
 	for _, row := range rows {
+		sounddata := make([]int, 16)
 		complist = append(complist,
 			define.CompDataList{
 				CompID:      row.Int(id),
@@ -301,6 +301,7 @@ func GetCompDataList() ([]define.CompDataList, []int) {
 
 	sqlsoundstr := "SELECT cmptb.COMP_INDEX compindex, cmptb.SOUND_ID soundid FROM COMPOSITION_MASTER cmpms INNER JOIN COMPOSITION_DATA_TB cmptb ON cmpms.ID = cmptb.COMP_MS_ID WHERE cmpms.ID = %d"
 
+	tmpmap := make(map[int]int)
 	for cnt, compval := range complist {
 		// Query実行
 		rowssound, ressound, iserrsound := checkedResult(DBConn.Query(sqlsoundstr, compval.CompID))
@@ -323,7 +324,6 @@ func GetCompDataList() ([]define.CompDataList, []int) {
 		i := 0
 		sid := 0
 		ok := false
-		tmpmap := make(map[int]int)
 		for _, rsound := range rowssound {
 			i = rsound.Int(index)
 			sid = rsound.Int(soundid)
