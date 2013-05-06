@@ -106,6 +106,7 @@ public class HttpUtility {
 				//サウンドデータのダウンロードとデータベースへの挿入処理
 				List<Integer> sounds = JsonUtil.createSoundIdsJson(result);
 				for(int soundId : sounds){
+					if(soundId <= 0) continue;
 					String path = getSoundSavePath(StringUtility.toString(soundId));
 					if(download(con, "http://gosrv.scarviz.net:59702/touchsession/reqsounddata?soundid=" + soundId,path ));
 					if(!SoundDto.isExsits(con, NumberUtility.toInt(soundId))){
@@ -113,6 +114,7 @@ public class HttpUtility {
 						sDto.setSoundId(NumberUtility.toInt(soundId));
 						sDto.setSoundFilePath(path);
 						sDto.setOwner(0);
+						sDto.insert(con);
 					}
 				}
 

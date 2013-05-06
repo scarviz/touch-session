@@ -324,7 +324,6 @@ public class SoundEditFragment extends Fragment {
 					Toast.makeText(getActivity(), "リズムデータをアップロードしました" ,Toast.LENGTH_SHORT).show();
 					//DB登録
 					ret.insert(getActivity());
-					Toast.makeText(getActivity(), "MESiD:" + ret.getComp_ms_id(), Toast.LENGTH_SHORT).show();
 					getActivity().finish();
 				}
 				else{
