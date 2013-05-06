@@ -71,7 +71,9 @@ public class JsonUtil {
 			dto.setTitle(kv.getJSONObject(i).getString("title"));
 			dto.setRhythm(kv.getJSONObject(i).getDouble("rhythm"));
 			dto.setEditing(0);
-			dto.setCompositionJson(kv.getJSONObject(i).getString("composition"));
+			JSONObject jsonobj = new JSONObject();
+			jsonobj.put("composition", kv.getJSONObject(i).getJSONArray("composition"));
+			dto.setCompositionJson(jsonobj.toString());
 			retList.add(dto);
 		}
 
